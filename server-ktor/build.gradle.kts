@@ -13,10 +13,8 @@ repositories {
 
 dependencies {
     implementation(kotlin("stdlib"))
-
-    api(project(":server"))
-
-    api("io.ktor:ktor-server-cio:$ktorVersion")
+    implementation(project(":server"))
+    implementation("io.ktor:ktor-server-cio:$ktorVersion")
     implementation("io.ktor:ktor-websockets:$ktorVersion")
-    api("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.4.1")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.4.1")
 }
