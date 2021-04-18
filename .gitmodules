@@ -1,0 +1,3 @@
+[submodule "server/src/main/resources/graphql-playground"]
+	path = server/src/main/resources/graphql-playground
+	url = https://github.com/graphql/graphql-playground

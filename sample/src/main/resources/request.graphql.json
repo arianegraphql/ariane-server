@@ -1,0 +1,6 @@
+mutation AddMovie($title: String!) {
+  addBook(title: $title, director: "Ridley Scott") {
+    title
+  }
+}
+

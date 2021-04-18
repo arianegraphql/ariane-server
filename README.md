@@ -1,2 +1,5 @@
-# ariane-server
-ArianeGraphQL server library
+# ArianeGraphQL
+
+## Documentation 
+
+https://arianegraphql.com

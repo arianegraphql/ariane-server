@@ -1,0 +1,27 @@
+type Query {
+    movies: [Movie!]
+    movie(title: String!): Movie
+    directors: [Director!]!
+}
+
+type Mutation {
+    addMovie(title: String!, director: String!): Movie!
+}
+
+type Subscription {
+    onMovieAdded: Movie!
+}
+
+type Subscr {
+    addMovie(title: String!, director: String!): Movie!
+}
+
+type Movie {
+    title: String!
+    director: Director!
+}
+
+type Director {
+    name: String!
+    movies: [Movie!]
+}
