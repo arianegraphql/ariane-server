@@ -25,10 +25,3 @@ jobs:
           distribution: 'adopt'
       - name: Run server tests
         run: ./gradlew :server:test
-
-
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name Deploy artifacts
-        run: echo "No deployment yet"
