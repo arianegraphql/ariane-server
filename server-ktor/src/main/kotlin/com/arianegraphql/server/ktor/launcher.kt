@@ -3,7 +3,8 @@ package com.arianegraphql.server.ktor
 import com.arianegraphql.server.config.ArianeServerConfiguration
 import com.arianegraphql.server.config.newArianeServer
 import com.arianegraphql.server.dsl.ArianeServerBuilder
-import com.arianegraphql.server.dsl.arianeServer
+import com.arianegraphql.server.ktor.dsl.ArianeKtorServerConfiguration
+import com.arianegraphql.server.ktor.dsl.arianeServer
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.routing.*
@@ -11,7 +12,7 @@ import io.ktor.server.cio.*
 import io.ktor.server.engine.*
 import io.ktor.websocket.*
 
-fun ArianeServerConfiguration.launch(wait: Boolean = true) {
+fun ArianeKtorServerConfiguration.launch(wait: Boolean = true) {
     val arianeServer = newArianeServer(JacksonSerializer)
 
     initLoggers()
@@ -33,6 +34,8 @@ fun ArianeServerConfiguration.launch(wait: Boolean = true) {
             }
         }
 
+        ktorPlugin?.invoke(this)
+
         routing {
             route(path) {
                 post {
@@ -51,6 +54,6 @@ fun ArianeServerConfiguration.launch(wait: Boolean = true) {
     }.start(wait = wait)
 }
 
-fun ArianeServerConfiguration.startWithoutWaiting() = launch(false)
+fun ArianeKtorServerConfiguration.launchWithoutWaiting() = launch(false)
 
 fun launchAriane(wait: Boolean = true, builder: ArianeServerBuilder.() -> Unit) = arianeServer(builder).launch(wait)

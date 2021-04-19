@@ -3,15 +3,18 @@ package com.arianegraphql.sample
 import com.arianegraphql.ktx.loadSchema
 import com.arianegraphql.sample.model.Director
 import com.arianegraphql.sample.model.Movie
-import com.arianegraphql.server.dsl.arianeServer
 import com.arianegraphql.server.graphql.GraphQLRequest
 import com.arianegraphql.server.graphql.GraphQLResponse
+import com.arianegraphql.server.ktor.dsl.arianeServer
 import com.arianegraphql.server.ktor.launch
 import com.arianegraphql.server.listener.RequestListener
 import com.arianegraphql.server.listener.ServerListener
 import com.arianegraphql.server.listener.SubscriptionListener
 import com.arianegraphql.server.request.HttpRequest
 import graphql.ExecutionInput
+import io.ktor.application.*
+import io.ktor.features.*
+import io.ktor.server.engine.*
 import kotlinx.coroutines.flow.*
 
 val movies = mutableListOf<Movie>()
@@ -25,7 +28,7 @@ fun main() {
         schema = loadSchema("schema.graphql")
         port = 3000
 
-        requestListener = object : RequestListener{
+        requestListener = object : RequestListener {
 
             override fun onReceived(httpRequest: HttpRequest) {
                 //Called when a request has been received.
