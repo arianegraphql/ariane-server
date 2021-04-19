@@ -8,7 +8,7 @@ import com.arianegraphql.server.listener.ServerListener
 import com.arianegraphql.server.listener.SubscriptionListener
 import graphql.GraphQL
 
-data class ArianeServerConfiguration(
+open class ArianeServerConfiguration(
     val schema: GraphQL,
     val host: String,
     val port: Int,

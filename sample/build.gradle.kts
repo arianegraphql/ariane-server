@@ -15,4 +15,5 @@ dependencies {
 
     implementation(project(":server"))
     implementation(project(":server-ktor"))
+    implementation("io.ktor:ktor-server-cio:1.5.3")
 }
