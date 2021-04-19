@@ -27,7 +27,7 @@ suspend fun WebSocketServerSession.handleGraphQLSubscription(arianeServer: Arian
             }
 
         }
-    } catch (e: Exception) {
-        e.printStackTrace()
+    } finally {
+        arianeServer.handleClosedWebSocket(sessionId)
     }
 }

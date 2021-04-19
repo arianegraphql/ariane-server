@@ -9,4 +9,6 @@ interface OperationStore {
     suspend fun stopOperation(sessionId: String, operationId: String)
 
     suspend fun stopAllOperations(sessionId: String)
+
+    suspend fun hasOperationForSessionId(sessionId: String): Boolean
 }
