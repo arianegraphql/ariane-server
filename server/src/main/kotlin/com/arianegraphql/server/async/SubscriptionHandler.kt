@@ -12,5 +12,5 @@ interface SubscriptionHandler {
 
     suspend fun stopSubscription(wsRequest: WebSocketRequest, wsPayload: WebSocketPayload): Flow<String>
 
-    suspend fun endSubscription(wsRequest: WebSocketRequest): Flow<String>
+    suspend fun endSubscription(sessionId: String)
 }

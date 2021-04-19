@@ -26,9 +26,13 @@ class OperationStoreImpl(
 
     override suspend fun stopOperation(sessionId: String, operationId: String) {
         operationStore[sessionId]?.get(operationId)?.cancel()
+        operationStore[sessionId]?.remove(operationId)
     }
 
     override suspend fun stopAllOperations(sessionId: String) {
         operationStore[sessionId]?.values?.forEach { it.cancel() }
+        operationStore.remove(sessionId)
     }
+
+    override suspend fun hasOperationForSessionId(sessionId: String) = operationStore.containsKey(sessionId)
 }

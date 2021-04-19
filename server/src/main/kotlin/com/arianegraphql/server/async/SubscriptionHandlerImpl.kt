@@ -62,13 +62,14 @@ class SubscriptionHandlerImpl(
         return flowOf(serializeWebSocketPayload(connectionComplete(operationId)))
     }
 
-    override suspend fun endSubscription(wsRequest: WebSocketRequest): Flow<String> {
-        val context = sessionStore.getContext(wsRequest.sessionId)
-        subscriptionListener?.onCloseConnection(wsRequest.sessionId, context)
+    override suspend fun endSubscription(sessionId: String) {
+        if (operationStore.hasOperationForSessionId(sessionId)) {
+            val context = sessionStore.getContext(sessionId)
+            subscriptionListener?.onCloseConnection(sessionId, context)
 
-        sessionStore.clearContext(wsRequest.sessionId)
+            sessionStore.clearContext(sessionId)
 
-        operationStore.stopAllOperations(wsRequest.sessionId)
-        return emptyFlow()
+            operationStore.stopAllOperations(sessionId)
+        }
     }
 }

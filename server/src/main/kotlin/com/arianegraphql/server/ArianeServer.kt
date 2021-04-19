@@ -9,4 +9,6 @@ interface ArianeServer {
     suspend fun handleHttpRequest(httpRequest: HttpRequest, onResponse: suspend (HttpResponse) -> Unit)
 
     suspend fun handleWebSocketMessage(wsRequest: WebSocketRequest): Flow<String>
+
+    suspend fun handleClosedWebSocket(sessionId: String)
 }

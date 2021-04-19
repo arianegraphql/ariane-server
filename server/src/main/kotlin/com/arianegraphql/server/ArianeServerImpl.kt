@@ -64,13 +64,18 @@ class ArianeServerImpl(
                 wsPayload.isConnectionInit -> initSubscription(wsRequest, contextResolver)
                 wsPayload.isStart -> startSubscription(wsRequest, wsPayload)
                 wsPayload.isStop -> stopSubscription(wsRequest, wsPayload)
-                wsPayload.isConnectionTerminate -> endSubscription(wsRequest)
+                wsPayload.isConnectionTerminate -> {
+                    endSubscription(wsRequest.sessionId)
+                    emptyFlow()
+                }
                 else -> flowOf(serializeWebSocketPayload(connectionError))
             }
         }.getOrElse {
             flowOf(serializeWebSocketPayload(connectionError))
         }
     }
+
+    override suspend fun handleClosedWebSocket(sessionId: String) = endSubscription(sessionId)
 
     companion object {
         const val CONTENT_TYPE = "application/json"
