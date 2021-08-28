@@ -34,8 +34,9 @@ jobs:
           java-version: '15'
       - name: Prepare environment
         env:
-          GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
-          GRADLE_PROPERTIESTOTO: ${{ secrets.GRADLE_PROPERTIESTOTO }}
-        run: echo $GRADLE_PROPERTIES > gradle.properties
+          GRADLE_PROPERTIES: ${{secrets.GRADLE_PROPERTIES}}
+          GRADLE_PROPERTIESTOTO: ${{secrets.GRADLE_PROPERTIESTOTO}}
+        shell: bash
+        run: 'echo $GRADLE_PROPERTIES > gradle.properties'
       - name: Deploy GraphQL-ktx library
         run: ./gradlew :graphql-ktx:publishToSonatype
