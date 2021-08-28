@@ -99,8 +99,6 @@ subprojects {
             val signingPassword = project.property("GPG_PASSPHRASE") as String?
             val signingKey= project.property("GPG_SECRET") as String?
 
-            println(signingKey)
-
             useInMemoryPgpKeys(signingKey, signingPassword)
             sign(publishing.publications)
         }
