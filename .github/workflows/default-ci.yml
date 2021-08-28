@@ -21,8 +21,8 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v2
         with:
-          java-version: '8'
-          distribution: 'adopt'
+          java-version: '15'
+          distribution: 'zulu'
       - name: Run server tests
         run: ./gradlew :server:test
 
@@ -33,8 +33,8 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v2
         with:
-          java-version: '8'
-          distribution: 'adopt'
+          java-version: '15'
+          distribution: 'zulu'
       -name: Prepare environment
         env:
           GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
