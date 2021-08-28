@@ -1,5 +1,5 @@
 name: ArianeServer CI
-on: [push]
+on: [release]
 
 jobs:
   build:
@@ -25,19 +25,3 @@ jobs:
           distribution: 'azul'
       - name: Run server tests
         run: ./gradlew :server:test
-
-  deploy-graphql-ktx:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Set up Java
-        uses: actions/setup-java@v2
-        with:
-          java-version: '8'
-          distribution: 'azul'
-      -name: Prepare environment
-        env:
-          GRADLE_PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
-        run: echo $GRADLE_PROPERTIES > gradle.properties
-      - name: Deploy GraphQL-ktx library
-        run: ./gradlew :graphql-ktx:publishToSonatype
