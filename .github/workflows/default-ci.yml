@@ -37,6 +37,6 @@ jobs:
           GRADLE_PROPERTIES: ${{secrets.GRADLE_PROPERTIES}}
           GRADLE_PROPERTIESTOTO: ${{secrets.GRADLE_PROPERTIESTOTO}}
         shell: bash
-        run: 'echo $GRADLE_PROPERTIES > gradle.properties'
+        run: 'echo "$GRADLE_PROPERTIES" > gradle.properties'
       - name: Deploy GraphQL-ktx library
         run: ./gradlew :graphql-ktx:publishToSonatype
