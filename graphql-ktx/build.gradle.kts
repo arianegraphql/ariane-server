@@ -1,6 +1,3 @@
-group = "com.arianegraphql"
-version = "0.0.3"
-
 dependencies {
     implementation("com.graphql-java:graphql-java:17.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")

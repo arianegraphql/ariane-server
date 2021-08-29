@@ -1,6 +1,3 @@
-group = "com.arianegraphql"
-version = "0.0.3"
-
 dependencies {
     api("com.graphql-java:graphql-java:17.2")
     api(project(":graphql-ktx"))
