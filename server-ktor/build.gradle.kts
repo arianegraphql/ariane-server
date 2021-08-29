@@ -1,20 +1,11 @@
-plugins {
-    kotlin("jvm")
-}
+group = project.rootProject.group
+version = project.rootProject.version
 
-group = "com.arianegraphql"
-version = "1.0-SNAPSHOT"
-
-val ktorVersion = "1.5.3"
-
-repositories {
-    mavenCentral()
-}
+val ktorVersion = "1.6.2"
 
 dependencies {
-    implementation(kotlin("stdlib"))
     implementation(project(":server"))
     implementation("io.ktor:ktor-server-cio:$ktorVersion")
     implementation("io.ktor:ktor-websockets:$ktorVersion")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.9.4.1")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.12.4")
 }
