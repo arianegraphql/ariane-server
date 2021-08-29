@@ -1,3 +1,6 @@
+group = project.rootProject.group
+version = project.rootProject.version
+
 dependencies {
     api("com.graphql-java:graphql-java:17.2")
     api(project(":graphql-ktx"))

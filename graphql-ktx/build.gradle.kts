@@ -1,3 +1,6 @@
+group = project.rootProject.group
+version = project.rootProject.version
+
 dependencies {
     implementation("com.graphql-java:graphql-java:17.2")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")
