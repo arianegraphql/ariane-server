@@ -41,7 +41,7 @@ jobs:
         shell: bash
         run: 'echo "$GRADLE_PROPERTIES" > gradle.properties'
       - name: Deploy GraphQL-ktx library
-        run: ./gradlew :graphql-ktx:publishToSonatype
+        run: cd graphql-ktx && ../gradlew :publishToSonatype
 
   deploy-server:
     needs: deploy-graphql-ktx
@@ -59,7 +59,7 @@ jobs:
         shell: bash
         run: 'echo "$GRADLE_PROPERTIES" > gradle.properties'
       - name: Deploy server library
-        run: ./gradlew :server:publishToSonatype
+        run: cd server && ../gradlew :publishToSonatype
 
   deploy-server-ktor:
     needs: deploy-server
@@ -77,4 +77,4 @@ jobs:
         shell: bash
         run: 'echo "$GRADLE_PROPERTIES" > gradle.properties'
       - name: Deploy Server Ktor library
-        run: ./gradlew :server-ktor:publishToSonatype
+        run: cd server-ktor && ../gradlew :publishToSonatype
