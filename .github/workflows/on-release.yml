@@ -9,7 +9,7 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
-          java-version: '15'
+          java-version: '8'
       - name: Build with Gradle
         run: ./gradlew :server:build
 
@@ -21,7 +21,7 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
-          java-version: '15'
+          java-version: '8'
       - name: Run server tests
         run: ./gradlew :server:test
 
@@ -33,7 +33,7 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
-          java-version: '15'
+          java-version: '8'
       - name: Prepare environment
         env:
           GRADLE_PROPERTIES: ${{secrets.GRADLE_PROPERTIES}}
@@ -51,7 +51,7 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
-          java-version: '15'
+          java-version: '8'
       - name: Prepare environment
         env:
           GRADLE_PROPERTIES: ${{secrets.GRADLE_PROPERTIES}}
@@ -69,7 +69,7 @@ jobs:
       - uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
-          java-version: '15'
+          java-version: '8'
       - name: Prepare environment
         env:
           GRADLE_PROPERTIES: ${{secrets.GRADLE_PROPERTIES}}
