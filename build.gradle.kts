@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.arianegraphql"
-version = "0.0.4"
+version = "0.0.5"
 
 repositories {
     mavenCentral()
@@ -77,7 +77,7 @@ subprojects {
                             }
                         }
                         scm {
-                            connection.set("scm:git:git://github.com/ExpediaGroup/graphql-kotlin.git")
+                            connection.set("scm:git:git://github.com/arianegraphql/ariane-server.git")
                             developerConnection.set("scm:git:git://github.com/arianegraphql/ariane-server.git")
                             url.set("https://github.com/arianegraphql/ariane-server")
                         }
