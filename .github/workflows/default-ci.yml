@@ -28,23 +28,3 @@ jobs:
           java-version: '8'
       - name: Run server tests
         run: ./gradlew :server:test
-
-
-  deploy-server:
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Setup submodules
-        run: git submodule init && git submodule update
-      - uses: actions/setup-java@v2
-        with:
-          distribution: 'zulu'
-          java-version: '8'
-      - name: Prepare environment
-        env:
-          GRADLE_PROPERTIES: ${{secrets.GRADLE_PROPERTIES}}
-        shell: bash
-        run: 'echo "$GRADLE_PROPERTIES" > gradle.properties'
-      - name: Deploy server library
-        run: ./gradlew :server:publishToSonatype
