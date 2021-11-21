@@ -6,6 +6,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - name: Setup submodules
+        run: git submodules init && git submodules update
       - uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
@@ -18,6 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        run: git submodules init && git submodules update
       - uses: actions/setup-java@v2
         with:
           distribution: 'zulu'

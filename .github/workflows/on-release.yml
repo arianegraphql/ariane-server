@@ -6,6 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        run: git submodules init && git submodules update
       - uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
@@ -18,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        run: git submodules init && git submodules update
       - uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
@@ -30,6 +32,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        run: git submodules init && git submodules update
       - uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
@@ -37,7 +40,6 @@ jobs:
       - name: Prepare environment
         env:
           GRADLE_PROPERTIES: ${{secrets.GRADLE_PROPERTIES}}
-          GRADLE_PROPERTIESTOTO: ${{secrets.GRADLE_PROPERTIESTOTO}}
         shell: bash
         run: 'echo "$GRADLE_PROPERTIES" > gradle.properties'
       - name: Deploy server library
@@ -48,6 +50,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+        run: git submodules init && git submodules update
       - uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
@@ -55,7 +58,6 @@ jobs:
       - name: Prepare environment
         env:
           GRADLE_PROPERTIES: ${{secrets.GRADLE_PROPERTIES}}
-          GRADLE_PROPERTIESTOTO: ${{secrets.GRADLE_PROPERTIESTOTO}}
         shell: bash
         run: 'echo "$GRADLE_PROPERTIES" > gradle.properties'
       - name: Deploy Server Ktor library
