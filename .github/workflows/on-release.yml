@@ -7,7 +7,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Setup submodules
-        run: git submodules init && git submodules update
+        run: git submodule init && git submodule update
       - uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Setup submodules
-        run: git submodules init && git submodules update
+        run: git submodule init && git submodule update
       - uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
@@ -35,7 +35,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Setup submodules
-        run: git submodules init && git submodules update
+        run: git submodule init && git submodule update
       - uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
@@ -54,7 +54,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Setup submodules
-        run: git submodules init && git submodules update
+        run: git submodule init && git submodule update
       - uses: actions/setup-java@v2
         with:
           distribution: 'zulu'
