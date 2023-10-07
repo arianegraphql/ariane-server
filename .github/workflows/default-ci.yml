@@ -45,4 +45,4 @@ jobs:
         shell: bash
         run: 'echo "$GRADLE_PROPERTIES" > gradle.properties'
       - name: Deploy server library
-        run: cd server/ && ./gradlew :server:publishToSonatype
+        run: cd server/ && ../gradlew :server:publishToSonatype
