@@ -1,5 +1,6 @@
 package com.arianegraphql.server.store
 
+import graphql.GraphQLContext
 import io.github.serpro69.kfaker.Faker
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
@@ -9,7 +10,7 @@ import org.junit.jupiter.api.Assertions.*
 
 internal class SessionStoreImplTest {
 
-    private val contextStore = mutableMapOf<String, Any>()
+    private val contextStore = mutableMapOf<String, GraphQLContext>()
     private lateinit var sessionStore: SessionStoreImpl
 
     @BeforeEach
@@ -21,32 +22,29 @@ internal class SessionStoreImplTest {
     fun `saveContext() should store context into hashmap`() = runBlocking {
         contextStore.clear()
         val sessionId = "foobar"
-        val context = FakeContext()
-        sessionStore.saveContext(sessionId, context)
+        val fakeContext = GraphQLContext.of(
+            mutableMapOf<Any, Any>(
+                "favoriteGalaxy" to Faker().space.galaxy()
+            )
+        )
 
-        assertEquals(context, contextStore[sessionId])
-    }
+        sessionStore.saveContext(sessionId, fakeContext)
 
-    @Test
-    fun `saveContext() should not store null context`() = runBlocking {
-        contextStore.clear()
-        val sessionId = "barfoo"
-
-        sessionStore.saveContext(sessionId, null)
-        assertEquals(0, contextStore.size)
+        assertEquals(fakeContext, contextStore[sessionId])
     }
 
     @Test
     fun `getContext() should return the context`() = runBlocking {
         val sessionId = "FOO_BAR"
+        val fakeContext = GraphQLContext.of(
+            mutableMapOf<Any, Any>(
+                "favoriteGalaxy" to Faker().space.galaxy()
+            )
+        )
 
-        val context = FakeContext()
-
-        contextStore[sessionId] = context
+        contextStore[sessionId] = fakeContext
 
         val actual = sessionStore.getContext(sessionId)
-        assertEquals(context, actual)
+        assertEquals(Result.success(fakeContext), actual)
     }
 }
-
-data class FakeContext(val favoriteGalaxy: String = Faker().space.galaxy())

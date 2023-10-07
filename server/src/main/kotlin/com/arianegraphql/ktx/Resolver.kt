@@ -1,26 +1,28 @@
 package com.arianegraphql.ktx
 
+import graphql.GraphQLContext
 import graphql.schema.DataFetcher
 import kotlinx.coroutines.runBlocking
 
-interface Resolver<S, C> {
-    suspend fun resolve(arguments: Argument, source: S, context: C?, info: Info): Any?
+interface Resolver<S> {
+    suspend fun resolve(arguments: Argument, source: S, context: GraphQLContext, info: Info): Any?
 }
 
-@JvmInline value class FunctionalResolver<S, C>(
-    private val lambda: suspend (arguments: Argument, source: S, context: C?, info: Info) -> Any?
-) : Resolver<S, C> {
+@JvmInline value class FunctionalResolver<S>(
+    private val lambda: suspend (arguments: Argument, source: S, context: GraphQLContext, info: Info) -> Any?
+) : Resolver<S> {
 
     override suspend fun resolve(
         arguments: Argument,
         source: S,
-        context: C?,
+        context: GraphQLContext,
         info: Info
     ) = lambda(arguments, source, context, info)
 }
 
-internal fun <S, C> Resolver<S, C>.toDataFetcher(): DataFetcher<Any?> = DataFetcher { env ->
+internal fun <S> Resolver<S>.toDataFetcher(): DataFetcher<Any?> = DataFetcher { env ->
     runBlocking {
-        resolve(DataFetchingArgument(env), env.getSource(), env.getContext(), env)
+        env.graphQlContext
+        resolve(DataFetchingArgument(env), env.getSource(), env.graphQlContext, env)
     }
 }

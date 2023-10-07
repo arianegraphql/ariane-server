@@ -1,19 +1,21 @@
 package com.arianegraphql.ktx
 
-interface SubscriptionFilter<T, S, C> {
+import graphql.GraphQLContext
 
-    suspend fun test(arguments: Argument, source: S, context: C?, info: Info, item: T): Boolean
+interface SubscriptionFilter<T, S> {
+
+    suspend fun test(arguments: Argument, source: S, context: GraphQLContext, info: Info, item: T): Boolean
 }
 
 @JvmInline
-value class FunctionalSubscriptionFilter<T, S, C>(
-    private val lambda: suspend (arguments: Argument, source: S, context: C?, info: Info, item: T) -> Boolean
-) : SubscriptionFilter<T, S, C> {
+value class FunctionalSubscriptionFilter<T, S>(
+    private val lambda: suspend (arguments: Argument, source: S, context: GraphQLContext, info: Info, item: T) -> Boolean
+) : SubscriptionFilter<T, S> {
 
     override suspend fun test(
         arguments: Argument,
         source: S,
-        context: C?,
+        context: GraphQLContext,
         info: Info,
         item: T
     ) = lambda(arguments, source, context, info, item)

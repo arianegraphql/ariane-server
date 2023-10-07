@@ -12,6 +12,7 @@ import com.arianegraphql.server.listener.ServerListener
 import com.arianegraphql.server.listener.SubscriptionListener
 import com.arianegraphql.server.request.HttpRequest
 import graphql.ExecutionInput
+import graphql.GraphQLContext
 import io.ktor.application.*
 import io.ktor.features.*
 import io.ktor.server.engine.*
@@ -74,40 +75,40 @@ fun main() {
                 println("[$sessionId] onNewConnection()")
             }
 
-            override fun onConnected(sessionId: String, context: Any?) {
+            override fun onConnected(sessionId: String, context: GraphQLContext) {
                 println("[$sessionId] onConnected()")
             }
 
-            override fun onStartSubscription(sessionId: String, context: Any?, operationId: String, graphQLRequest: GraphQLRequest) {
+            override fun onStartSubscription(sessionId: String, context: GraphQLContext, operationId: String, graphQLRequest: GraphQLRequest) {
                 println("[$sessionId] onStartSubscription($operationId, ${graphQLRequest.operationName})")
             }
 
-            override fun onStopSubscription(sessionId: String, context: Any?, operationId: String) {
+            override fun onStopSubscription(sessionId: String, context: GraphQLContext, operationId: String) {
                 println("[$sessionId] onStopSubscription($operationId)")
             }
 
-            override fun onCloseConnection(sessionId: String, context: Any?) {
+            override fun onCloseConnection(sessionId: String, context: GraphQLContext) {
                 println("[$sessionId] onCloseConnection()")
             }
         }
 
         resolvers {
             Query {
-                resolve("movies") { _, _: Any?, _: Any?, _ ->
+                resolve("movies") { _, _: Any?, _: GraphQLContext, _ ->
                     movies
                 }
 
-                resolve("directors") { _, _: Any?, _: Any?, _ ->
+                resolve("directors") { _, _: Any?, _: GraphQLContext, _ ->
                     movies.map { it.director }.distinctBy { it.name }
                 }
 
-                resolve("movie") { args, _: Any?, _: Any?, _ ->
+                resolve("movie") { args, _: Any?, _: GraphQLContext, _ ->
                     movies.find { it.title == args["title"] }
                 }
             }
 
             Mutation {
-                resolve("addMovie") { args, parent: Any?, context: Any?, info ->
+                resolve("addMovie") { args, parent: Any?, context: GraphQLContext, info ->
                     val movie = Movie(args["title"], Director(args["director"]))
                     movies.add(movie)
 
@@ -117,7 +118,7 @@ fun main() {
             }
 
             type("Director") {
-                resolve("movies") { args: Any, parent: Director, context: Any?, info ->
+                resolve("movies") { args: Any, parent: Director, context: GraphQLContext, info ->
                     movies.filter { it.director.name == parent.name }
                 }
             }

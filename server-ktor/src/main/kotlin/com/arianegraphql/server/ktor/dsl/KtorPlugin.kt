@@ -1,6 +1,6 @@
 package com.arianegraphql.server.ktor.dsl
 
-import io.ktor.application.*
+import io.ktor.server.application.Application
 
 interface KtorPlugin{
     fun invoke(application: Application)

@@ -15,7 +15,7 @@ open class ArianeServerConfiguration(
     val path: String,
     val isPlaygroundEnabled: Boolean,
     val enableCORS: Boolean,
-    val contextResolver: ContextResolver<*>,
+    val contextResolver: ContextResolver,
     val serverListener: ServerListener?,
     val requestListener: RequestListener?,
     val subscriptionListener: SubscriptionListener?

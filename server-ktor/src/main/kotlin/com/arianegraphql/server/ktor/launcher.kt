@@ -1,16 +1,15 @@
 package com.arianegraphql.server.ktor
 
-import com.arianegraphql.server.config.ArianeServerConfiguration
 import com.arianegraphql.server.config.newArianeServer
 import com.arianegraphql.server.dsl.ArianeServerBuilder
 import com.arianegraphql.server.ktor.dsl.ArianeKtorServerConfiguration
 import com.arianegraphql.server.ktor.dsl.arianeServer
-import io.ktor.application.*
-import io.ktor.features.*
-import io.ktor.routing.*
 import io.ktor.server.cio.*
 import io.ktor.server.engine.*
-import io.ktor.websocket.*
+import io.ktor.server.application.*
+import io.ktor.server.routing.*
+import io.ktor.server.websocket.*
+import io.ktor.server.plugins.cors.routing.CORS
 
 fun ArianeKtorServerConfiguration.launch(wait: Boolean = true) {
     val arianeServer = newArianeServer(JacksonSerializer)
