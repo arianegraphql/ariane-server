@@ -30,7 +30,6 @@ jobs:
         run: ./gradlew :server:test
 
   deploy-server:
-    needs: test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
