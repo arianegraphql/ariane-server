@@ -25,7 +25,10 @@ class SubscriptionHandlerImpl(
     private val operationStore: OperationStore = OperationStoreImpl()
 ) : SubscriptionHandler, JsonSerializer by jsonSerializer, RequestPerformer by requestPerformer {
 
-    override suspend fun initSubscription(wsRequest: WebSocketRequest, contextResolver: ContextResolver<*>): Flow<String> {
+    override suspend fun initSubscription(
+        wsRequest: WebSocketRequest,
+        contextResolver: ContextResolver
+    ): Flow<String> {
         subscriptionListener?.onNewConnection(wsRequest.sessionId)
         val context = contextResolver.resolveContext(wsRequest)
         sessionStore.saveContext(wsRequest.sessionId, context)
@@ -41,7 +44,11 @@ class SubscriptionHandlerImpl(
 
         return flow {
             operationStore.startOperation(wsRequest.sessionId, operationId) {
-                val context = sessionStore.getContext(wsRequest.sessionId)
+                val context = sessionStore.getContext(wsRequest.sessionId).getOrElse {
+                    it.printStackTrace()
+                    return@startOperation
+                }
+
                 subscriptionListener?.onStartSubscription(wsRequest.sessionId, context, operationId, graphQLRequest)
 
                 performRequest(graphQLRequest, context, requestListener)
@@ -56,15 +63,21 @@ class SubscriptionHandlerImpl(
         val operationId = wsPayload.id ?: return flowOf(serializeWebSocketPayload(connectionError))
 
         operationStore.stopOperation(wsRequest.sessionId, operationId)
-        val context = sessionStore.getContext(wsRequest.sessionId)
-        subscriptionListener?.onStopSubscription(wsRequest.sessionId, context, operationId)
+        sessionStore.getContext(wsRequest.sessionId).fold(onSuccess = { context ->
+            subscriptionListener?.onStopSubscription(wsRequest.sessionId, context, operationId)
+        }, onFailure = {
+            it.printStackTrace()
+        })
 
         return flowOf(serializeWebSocketPayload(connectionComplete(operationId)))
     }
 
     override suspend fun endSubscription(sessionId: String) {
         if (operationStore.hasOperationForSessionId(sessionId)) {
-            val context = sessionStore.getContext(sessionId)
+            val context = sessionStore.getContext(sessionId).getOrElse {
+                it.printStackTrace()
+                return
+            }
             subscriptionListener?.onCloseConnection(sessionId, context)
 
             sessionStore.clearContext(sessionId)

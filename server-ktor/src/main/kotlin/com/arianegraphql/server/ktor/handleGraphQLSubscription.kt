@@ -2,12 +2,10 @@ package com.arianegraphql.server.ktor
 
 import com.arianegraphql.server.ArianeServer
 import com.arianegraphql.server.request.WebSocketRequest
-import io.ktor.http.cio.websocket.*
+import io.ktor.server.websocket.*
 import io.ktor.util.*
 import io.ktor.websocket.*
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.lang.Exception
 import java.util.*
 
 suspend fun WebSocketServerSession.handleGraphQLSubscription(arianeServer: ArianeServer) {

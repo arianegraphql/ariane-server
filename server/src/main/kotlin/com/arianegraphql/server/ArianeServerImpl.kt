@@ -17,7 +17,7 @@ import kotlinx.coroutines.flow.*
 class ArianeServerImpl(
     private val schema: GraphQL,
     private val isPlaygroundEnabled: Boolean,
-    private val contextResolver: ContextResolver<*>,
+    private val contextResolver: ContextResolver,
     private val requestListener: RequestListener?,
     private val subscriptionListener: SubscriptionListener?,
     jsonSerializer: JsonSerializer,

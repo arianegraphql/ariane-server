@@ -6,7 +6,7 @@ import com.arianegraphql.server.request.WebSocketRequest
 import kotlinx.coroutines.flow.Flow
 
 interface SubscriptionHandler {
-    suspend fun initSubscription(wsRequest: WebSocketRequest, contextResolver: ContextResolver<*>): Flow<String>
+    suspend fun initSubscription(wsRequest: WebSocketRequest, contextResolver: ContextResolver): Flow<String>
 
     suspend fun startSubscription(wsRequest: WebSocketRequest, wsPayload: WebSocketPayload, ): Flow<String>
 

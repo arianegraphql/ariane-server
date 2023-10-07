@@ -4,8 +4,8 @@ import com.arianegraphql.ktx.GraphQLSchemaDslMarker
 import com.arianegraphql.ktx.makeExecutableSchema
 import com.arianegraphql.server.dsl.ArianeServerBuilder
 import graphql.GraphQL
-import io.ktor.application.*
 import java.lang.IllegalStateException
+import io.ktor.server.application.Application
 
 @GraphQLSchemaDslMarker
 class ArianeKtorServerBuilder : ArianeServerBuilder() {

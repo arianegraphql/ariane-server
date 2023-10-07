@@ -1,10 +1,12 @@
 package com.arianegraphql.server.store
 
+import graphql.GraphQLContext
+
 interface SessionStore {
 
-    suspend fun saveContext(sessionId: String, context: Any?)
+    suspend fun saveContext(sessionId: String, context: GraphQLContext)
 
-    suspend fun getContext(sessionId: String): Any?
+    suspend fun getContext(sessionId: String): Result<GraphQLContext>
 
     suspend fun clearContext(sessionId: String)
 }

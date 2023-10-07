@@ -1,5 +1,6 @@
 package com.arianegraphql.ktx
 
+import graphql.GraphQLContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.reactive.asPublisher
@@ -12,8 +13,8 @@ class SubscriptionTypeResolverBuilder : TypeResolverBuilder() {
 
     fun <T : Any> resolve(field: String, flow: Flow<T>) = resolve(field, flow.asPublisher())
 
-    fun <T : Any, S, C> resolve(field: String, flow: Flow<T>, predicate: SubscriptionFilter<T, S, C>) =
-        resolve(field) { arguments: Argument, source: S, context: C?, info: Info ->
+    fun <T : Any, S> resolve(field: String, flow: Flow<T>, predicate: SubscriptionFilter<T, S>) =
+        resolve(field) { arguments: Argument, source: S, context: GraphQLContext, info: Info ->
             flow.filter {
                 predicate.test(arguments, source, context, info, it)
             }.asPublisher()
@@ -22,6 +23,6 @@ class SubscriptionTypeResolverBuilder : TypeResolverBuilder() {
     fun <T : Any, S, C> resolve(
         field: String,
         flow: Flow<T>,
-        predicate: suspend (arguments: Argument, source: S, context: C?, info: Info, item: T) -> Boolean
+        predicate: suspend (arguments: Argument, source: S, context: GraphQLContext, info: Info, item: T) -> Boolean
     ) = resolve(field, flow, FunctionalSubscriptionFilter(predicate))
 }

@@ -14,7 +14,7 @@ class ArianeKtorServerConfiguration(
     path: String,
     isPlaygroundEnabled: Boolean,
     enableCORS: Boolean,
-    contextResolver: ContextResolver<*>,
+    contextResolver: ContextResolver,
     serverListener: ServerListener?,
     requestListener: RequestListener?,
     subscriptionListener: SubscriptionListener?,

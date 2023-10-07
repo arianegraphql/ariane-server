@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.5.30"
+    kotlin("jvm") version "1.8.20"
     signing
     `maven-publish`
     id("io.github.gradle-nexus.publish-plugin") version "1.0.0"
@@ -17,9 +17,9 @@ repositories {
 subprojects {
     tasks.withType<KotlinCompile> {
         kotlinOptions {
-            jvmTarget = "1.8"
-            languageVersion = "1.5"
-            apiVersion = "1.5"
+            jvmTarget = "17"
+            languageVersion = "1.8"
+            apiVersion = "1.8"
         }
     }
 

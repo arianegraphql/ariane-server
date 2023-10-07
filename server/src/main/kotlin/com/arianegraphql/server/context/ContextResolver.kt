@@ -1,14 +1,15 @@
 package com.arianegraphql.server.context
 
 import com.arianegraphql.server.request.IncomingRequest
+import graphql.GraphQLContext
 
-interface ContextResolver<R: Any> {
-    suspend fun resolveContext(request: IncomingRequest): R?
+interface ContextResolver {
+    suspend fun resolveContext(request: IncomingRequest): GraphQLContext
 }
 
-@JvmInline value class FunctionalContextResolver<R: Any>(
-    private val lambda: suspend (request: IncomingRequest) -> R?
-) : ContextResolver<R> {
+@JvmInline value class FunctionalContextResolver(
+    private val lambda: suspend (request: IncomingRequest) -> GraphQLContext
+) : ContextResolver {
 
-    override suspend fun resolveContext(request: IncomingRequest): R? = lambda(request)
+    override suspend fun resolveContext(request: IncomingRequest): GraphQLContext = lambda(request)
 }

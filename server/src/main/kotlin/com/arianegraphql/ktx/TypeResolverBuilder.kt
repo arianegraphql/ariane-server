@@ -1,17 +1,18 @@
 package com.arianegraphql.ktx
 
+import graphql.GraphQLContext
 import graphql.schema.idl.TypeRuntimeWiring
 
 @GraphQLSchemaDslMarker
 open class TypeResolverBuilder {
 
-    internal val typeResolver = mutableMapOf<String, Resolver<*, *>>()
+    internal val typeResolver = mutableMapOf<String, Resolver<*>>()
 
-    fun <S, C> resolve(field: String, resolver: Resolver<S, C>) {
+    fun <S> resolve(field: String, resolver: Resolver<S>) {
         typeResolver[field] = resolver
     }
 
-    fun <S, C> resolve(field: String, resolver: suspend (arguments: Argument, source: S, context: C?, info: Info) -> Any?) {
+    fun <S> resolve(field: String, resolver: suspend (arguments: Argument, source: S, context: GraphQLContext, info: Info) -> Any?) {
         typeResolver[field] = FunctionalResolver(resolver)
     }
 

@@ -8,6 +8,7 @@ import com.arianegraphql.server.listener.RequestListener
 import com.arianegraphql.server.listener.ServerListener
 import com.arianegraphql.server.listener.SubscriptionListener
 import com.arianegraphql.server.request.IncomingRequest
+import graphql.GraphQLContext
 
 @GraphQLSchemaDslMarker
 open class ArianeServerBuilder : RuntimeWiringBuilder() {
@@ -24,15 +25,15 @@ open class ArianeServerBuilder : RuntimeWiringBuilder() {
     var requestListener: RequestListener? = null
     var subscriptionListener: SubscriptionListener? = null
 
-    var contextResolver: ContextResolver<*> = object : ContextResolver<Any> {
-        override suspend fun resolveContext(request: IncomingRequest): Any? = null
+    var contextResolver: ContextResolver = object : ContextResolver {
+        override suspend fun resolveContext(request: IncomingRequest): GraphQLContext = GraphQLContext.of(emptyMap<Any, Any>())
     }
 
-    fun <R : Any> context(contextResolver: ContextResolver<R>) {
+    fun <R : Any> context(contextResolver: ContextResolver) {
         this.contextResolver = contextResolver
     }
 
-    fun <R : Any> context(contextResolver: suspend (request: IncomingRequest) -> R?) {
+    fun <R : Any> context(contextResolver: suspend (request: IncomingRequest) -> GraphQLContext) {
         this.contextResolver = FunctionalContextResolver(contextResolver)
     }
 
