@@ -46,7 +46,7 @@ jobs:
         shell: bash
         run: 'echo "$GRADLE_PROPERTIES" > gradle.properties'
       - name: Deploy server library
-        run: ./gradlew :server:publishToSonatype
+        run: cd server/ && ../gradlew :server:publishToSonatype
 
   deploy-server-ktor:
     needs: deploy-server
@@ -65,4 +65,4 @@ jobs:
         shell: bash
         run: 'echo "$GRADLE_PROPERTIES" > gradle.properties'
       - name: Deploy Server Ktor library
-        run: ./gradlew :server-ktor:publishToSonatype
+        run: cd server-ktor/ && ../gradlew :server-ktor:publishToSonatype
