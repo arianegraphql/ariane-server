@@ -9,7 +9,7 @@ interface Resolver<S> {
 }
 
 @JvmInline value class FunctionalResolver<S>(
-    private val lambda: suspend (arguments: Argument, source: S, context: GraphQLContext, info: Info) -> Any?
+    private val lambda: suspend (parameters: ResolverParameters<S>) -> Any?
 ) : Resolver<S> {
 
     override suspend fun resolve(
@@ -17,7 +17,7 @@ interface Resolver<S> {
         source: S,
         context: GraphQLContext,
         info: Info
-    ) = lambda(arguments, source, context, info)
+    ) = lambda(ResolverParameters(arguments, source, context, info))
 }
 
 internal fun <S> Resolver<S>.toDataFetcher(): DataFetcher<Any?> = DataFetcher { env ->
