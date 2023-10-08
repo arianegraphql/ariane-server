@@ -7,22 +7,22 @@ import kotlinx.coroutines.reactive.asPublisher
 import org.reactivestreams.Publisher
 
 @GraphQLSchemaDslMarker
-class SubscriptionTypeResolverBuilder : TypeResolverBuilder() {
+class SubscriptionTypeResolverBuilder : TypeResolverBuilder<GraphQLTypes.Subscription>() {
 
-    fun <T> resolve(field: String, publisher: Publisher<T>) = resolve(field) { _, _: Any?, _: Any?, _ -> publisher }
+    fun <T> resolve(field: String, publisher: Publisher<T>) = resolve(field) { publisher }
 
     fun <T : Any> resolve(field: String, flow: Flow<T>) = resolve(field, flow.asPublisher())
 
-    fun <T : Any, S> resolve(field: String, flow: Flow<T>, predicate: SubscriptionFilter<T, S>) =
-        resolve(field) { arguments: Argument, source: S, context: GraphQLContext, info: Info ->
+    fun <T : Any> resolve(field: String, flow: Flow<T>, predicate: SubscriptionFilter<T, GraphQLTypes.Subscription>) =
+        resolve(field) {
             flow.filter {
                 predicate.test(arguments, source, context, info, it)
             }.asPublisher()
         }
 
-    fun <T : Any, S, C> resolve(
+    fun <T : Any> resolve(
         field: String,
         flow: Flow<T>,
-        predicate: suspend (arguments: Argument, source: S, context: GraphQLContext, info: Info, item: T) -> Boolean
+        predicate: suspend (arguments: Argument, source: GraphQLTypes.Subscription, context: GraphQLContext, info: Info, item: T) -> Boolean
     ) = resolve(field, flow, FunctionalSubscriptionFilter(predicate))
 }
