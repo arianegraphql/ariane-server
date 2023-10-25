@@ -22,7 +22,6 @@ interface Resolver<S> {
 
 internal fun <S> Resolver<S>.toDataFetcher(): DataFetcher<Any?> = DataFetcher { env ->
     runBlocking {
-        env.graphQlContext
         resolve(DataFetchingArgument(env), env.getSource(), env.graphQlContext, env)
     }
 }
