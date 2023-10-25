@@ -6,7 +6,7 @@ import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.RuntimeWiring.newRuntimeWiring
 
 @GraphQLSchemaDslMarker
-open class RuntimeWiringBuilder {
+open class RuntimeWiringBuilder: EnumProviderBuilder() {
     private val runtimeWiringBuilder: RuntimeWiring.Builder = newRuntimeWiring()
 
     fun resolvers(builder: RootResolverBuilder.() -> Unit) = RootResolverBuilder().apply(builder).build().forEach {
@@ -29,15 +29,10 @@ open class RuntimeWiringBuilder {
     fun <I, O> scalar(name: String, builder: ScalarBuilder<I?, O?>.() -> Unit) =
         scalar(ScalarBuilder<I?, O?>().apply(builder).build(name))
 
-    fun build() = runtimeWiringBuilder.build()
-}
-
-fun resolvers(builder: RootResolverBuilder.() -> Unit): RuntimeWiring {
-    val runtimeWiringBuilder: RuntimeWiring.Builder = newRuntimeWiring()
-
-    RootResolverBuilder().apply(builder).build().forEach {
-        runtimeWiringBuilder.type(it)
+    fun build(): RuntimeWiring {
+        enumProviders.values.forEach {
+            runtimeWiringBuilder.type(it)
+        }
+        return runtimeWiringBuilder.build()
     }
-
-    return runtimeWiringBuilder.build()
 }
