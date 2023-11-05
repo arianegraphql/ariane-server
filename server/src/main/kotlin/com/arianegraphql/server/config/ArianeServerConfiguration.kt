@@ -18,7 +18,7 @@ open class ArianeServerConfiguration(
     val contextResolver: ContextResolver,
     val serverListener: ServerListener?,
     val requestListener: RequestListener?,
-    val subscriptionListener: SubscriptionListener?
+    val subscriptionListener: SubscriptionListener?,
 )
 
 fun ArianeServerConfiguration.newArianeServer(jsonSerializer: JsonSerializer) =

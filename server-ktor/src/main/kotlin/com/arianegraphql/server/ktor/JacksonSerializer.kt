@@ -29,4 +29,8 @@ object JacksonSerializer : JsonSerializer {
     override fun serializeWebSocketPayload(payload: WebSocketPayload): String {
         return jackson.writeValueAsString(payload)
     }
+
+    override fun <T> resolve(type: Class<T>, value: Map<String, Any>): T {
+        return jackson.convertValue(value, type)
+    }
 }
