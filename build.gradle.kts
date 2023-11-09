@@ -4,15 +4,12 @@ plugins {
     kotlin("jvm") version "1.8.20"
     signing
     `maven-publish`
+    id("com.google.devtools.ksp") version "1.8.20-1.0.10"
     id("io.github.gradle-nexus.publish-plugin") version "1.0.0"
 }
 
 group = "com.arianegraphql"
 version = "0.2.0"
-
-repositories {
-    mavenCentral()
-}
 
 subprojects {
     tasks.withType<KotlinCompile> {
@@ -30,10 +27,6 @@ subprojects {
     apply(plugin = "kotlin")
     apply(plugin = "maven-publish")
     apply(plugin = "signing")
-
-    repositories {
-        mavenCentral()
-    }
 
     dependencies {
         implementation(kotlin("stdlib"))

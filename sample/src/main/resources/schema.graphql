@@ -1,31 +1,40 @@
-input UserObjectInput {
-    userId: String!
-    userName: String
-    userBirthday: String
-    userProduct: ProductType!
+scalar Date
+
+input DirectorInput {
+    name: String!
 }
 
-type ResultObject {
-    attributeA: String!
-    attributeB: String!
-    attributeC: String
-    productType: ProductType
-}
-
-enum ProductType {
-    PRODUCT_A,
-    PRODUCT_B,
-    UNKNOWN
-}
-
-type Mutation {
-    mutationWithUser(
-    userId: String!,
-    userName: String,
-    userBirthday: String,
-    userProduct: ProductType!): ResultObject!
+input MovieInput {
+    title: String!
+    stars: Float!
+    visitors: Int
+    releasedDate: String!
+    director: DirectorInput!
 }
 
 type Query {
-    helloWorld: String
+    movies: [Movie!]!
+
+    directors: [Director!]!
+}
+
+type Mutation {
+    addMovie(movie: MovieInput): Movie!
+}
+
+type Subscription {
+    onMovieAdded: Movie!
+}
+
+type Movie {
+    title: String!
+    stars: Float!
+    visitors: Int
+    releasedDate: String!
+    director: Director!
+}
+
+type Director {
+    name: String!
+    movies: [Movie!]
 }
