@@ -1,4 +1,11 @@
-scalar Date
+enum MovieKind {
+    Drama,
+    Action,
+    ScienceFiction,
+    Thriller,
+    Horror,
+    Other
+}
 
 input DirectorInput {
     name: String!

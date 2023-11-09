@@ -8,6 +8,7 @@ import com.google.devtools.ksp.symbol.KSAnnotated
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.asClassName
 import com.squareup.kotlinpoet.ksp.writeTo
+import graphql.language.EnumTypeDefinition
 import graphql.language.InputObjectTypeDefinition
 import graphql.language.ObjectTypeDefinition
 import graphql.schema.idl.TypeDefinitionRegistry
@@ -38,6 +39,7 @@ class SchemaProcessor(
                 it is ObjectTypeDefinition && it.name == "Subscription" -> processSubscription(it)
                 it is ObjectTypeDefinition -> processType(it)
                 it is InputObjectTypeDefinition -> processInputType(it)
+                it is EnumTypeDefinition ->  processEnumType(it)
             }
         }
 
@@ -69,6 +71,10 @@ class SchemaProcessor(
             generateResolverFunction(ClassName("com.arianegraphql.codegen.types", typeDef.name), it).writeTo(codeGenerator, true)
         }
         //TODO create resolvers
+    }
+
+    private fun processEnumType(typeDef: EnumTypeDefinition) {
+        typeDef.generateFile().writeTo(codeGenerator, true)
     }
 
     private fun processInputType(typeDef: InputObjectTypeDefinition) {
