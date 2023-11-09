@@ -4,7 +4,7 @@ import com.squareup.kotlinpoet.*
 import graphql.language.EnumTypeDefinition
 
 fun EnumTypeDefinition.generateFile(): FileSpec {
-    val packageName = "com.arianegraphql.codegen.types"
+    val packageName = "com.arianegraphql.codegen.type"
 
     val builder = TypeSpec.enumBuilder(name)
     enumValueDefinitions.forEach {

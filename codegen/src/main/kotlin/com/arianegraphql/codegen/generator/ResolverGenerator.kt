@@ -2,29 +2,42 @@ package com.arianegraphql.codegen.generator
 
 import com.arianegraphql.ktx.ResolverParameters
 import com.arianegraphql.ktx.TypeResolverBuilder
+import com.google.devtools.ksp.processing.KSPLogger
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import graphql.language.FieldDefinition
+import graphql.language.ObjectTypeDefinition
 
-fun generateResolverFunction(parent: ClassName, type: FieldDefinition): FileSpec {
-    val parentTypeName = parent.simpleName
-    val packageName = "com.arianegraphql.codegen.resolver.${parentTypeName.replaceFirstChar { it.lowercase() }}"
-    val fileName = type.name
+fun ObjectTypeDefinition.generateAllResolvers(parent: ClassName, logger: KSPLogger): List<FileSpec> {
+    val packageName = "com.arianegraphql.codegen.resolver"
+    val builder = FileSpec.builder(packageName, parent.simpleName)
 
+    val argumentsFile = mutableListOf<FileSpec>()
+
+    fieldDefinitions.forEach {
+        it.generateResolverFunction(parent, builder)
+        argumentsFile += it.generateArgument(parent, logger)
+    }
+
+    argumentsFile += builder.build()
+
+    return argumentsFile
+}
+
+
+fun FieldDefinition.generateResolverFunction(parent: ClassName, fileSpecBuilder: FileSpec.Builder) {
     val functionReceiver = TypeResolverBuilder::class.asClassName().parameterizedBy(parent).copy(
         annotations = emptyList()
     )
 
-    return FileSpec.builder(packageName, fileName)
+    fileSpecBuilder
         .addFunction(
-            FunSpec.builder(type.name)
+            FunSpec.builder(name)
                 .receiver(functionReceiver)
                 .addParameter(functionalResolverLambdaParameter(parent))
-                .addCode("resolve(%S, $RESOLVER_PARAMETER_NAME)", type.name)
+                .addCode("resolve(%S, $RESOLVER_PARAMETER_NAME)", name)
                 .build()
         )
-        .build()
-
 }
 
 private fun functionalResolverLambdaParameter(className: ClassName) = ParameterSpec.builder(

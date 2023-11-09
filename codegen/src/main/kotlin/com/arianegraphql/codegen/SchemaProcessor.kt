@@ -1,7 +1,9 @@
 package com.arianegraphql.codegen
 
+import com.arianegraphql.codegen.generator.generateAllResolvers
 import com.arianegraphql.codegen.generator.generateFile
 import com.arianegraphql.codegen.generator.generateResolverFunction
+import com.arianegraphql.codegen.ktx.writeTo
 import com.arianegraphql.ktx.GraphQLTypes
 import com.google.devtools.ksp.processing.*
 import com.google.devtools.ksp.symbol.KSAnnotated
@@ -47,30 +49,22 @@ class SchemaProcessor(
     }
 
     private fun processMutation(mutationTypeDef: ObjectTypeDefinition) {
-        mutationTypeDef.fieldDefinitions.forEach {
-            generateResolverFunction(mutationTypeName, it).writeTo(codeGenerator, true)
-        }
+        mutationTypeDef.generateAllResolvers(mutationTypeName, logger).writeTo(codeGenerator, true)
     }
 
     private fun processQuery(queryTypeDef: ObjectTypeDefinition) {
-        queryTypeDef.fieldDefinitions.forEach {
-            generateResolverFunction(queryTypeName, it).writeTo(codeGenerator, true)
-        }
+        queryTypeDef.generateAllResolvers(queryTypeName, logger).writeTo(codeGenerator, true)
     }
 
     private fun processSubscription(subscriptionTypeDef: ObjectTypeDefinition) {
-        subscriptionTypeDef.fieldDefinitions.forEach {
-            generateResolverFunction(subscriptionTypeName, it).writeTo(codeGenerator, true)
-        }
+        subscriptionTypeDef.generateAllResolvers(subscriptionTypeName, logger).writeTo(codeGenerator, true)
     }
 
     private fun processType(typeDef: ObjectTypeDefinition) {
         typeDef.generateFile(logger).writeTo(codeGenerator, true)
 
-        typeDef.fieldDefinitions.forEach {
-            generateResolverFunction(ClassName("com.arianegraphql.codegen.types", typeDef.name), it).writeTo(codeGenerator, true)
-        }
-        //TODO create resolvers
+        val typeClass = ClassName("com.arianegraphql.codegen.type", typeDef.name)
+        typeDef.generateAllResolvers(typeClass, logger).writeTo(codeGenerator, true)
     }
 
     private fun processEnumType(typeDef: EnumTypeDefinition) {
@@ -78,7 +72,7 @@ class SchemaProcessor(
     }
 
     private fun processInputType(typeDef: InputObjectTypeDefinition) {
-        //TODO create class
+        typeDef.generateFile(logger).writeTo(codeGenerator, true)
     }
 
     companion object {

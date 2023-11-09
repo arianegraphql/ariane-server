@@ -1,9 +1,12 @@
-enum MovieKind {
-    Drama,
+enum MovieGenre {
     Action,
-    ScienceFiction,
-    Thriller,
+    Comedy,
+    Drama,
+    Fantasy,
     Horror,
+    Mystery,
+    Romance,
+    Thriller,
     Other
 }
 
@@ -17,6 +20,7 @@ input MovieInput {
     visitors: Int
     releasedDate: String!
     director: DirectorInput!
+    genre: MovieGenre!
 }
 
 type Query {
@@ -39,6 +43,7 @@ type Movie {
     visitors: Int
     releasedDate: String!
     director: Director!
+    genre: MovieGenre!
 }
 
 type Director {
