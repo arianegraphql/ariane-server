@@ -18,7 +18,7 @@ class ArianeKtorServerConfiguration(
     serverListener: ServerListener?,
     requestListener: RequestListener?,
     subscriptionListener: SubscriptionListener?,
-    val ktorPlugin: KtorPlugin?
+    val ktorPlugin: KtorPlugin?,
 ) : ArianeServerConfiguration(
     schema,
     host,

@@ -1,7 +1,8 @@
 package com.arianegraphql.server.async
 
+import com.arianegraphql.ktx.argumentTypeResolver
 import com.arianegraphql.server.context.ContextResolver
-import com.arianegraphql.server.extensions.toWebSocketPayload
+import com.arianegraphql.ktx.toWebSocketPayload
 import com.arianegraphql.server.graphql.RequestPerformer
 import com.arianegraphql.server.json.JsonSerializer
 import com.arianegraphql.server.listener.RequestListener
@@ -12,12 +13,13 @@ import com.arianegraphql.server.store.OperationStoreImpl
 import com.arianegraphql.server.store.SessionStore
 import com.arianegraphql.server.store.SessionStoreImpl
 import graphql.ExecutionResult
+import graphql.GraphQLContext
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.reactive.asFlow
 import org.reactivestreams.Publisher
 
 class SubscriptionHandlerImpl(
-    jsonSerializer: JsonSerializer,
+    private val jsonSerializer: JsonSerializer,
     requestPerformer: RequestPerformer,
     private val requestListener: RequestListener?,
     private val subscriptionListener: SubscriptionListener?,
@@ -30,9 +32,15 @@ class SubscriptionHandlerImpl(
         contextResolver: ContextResolver
     ): Flow<String> {
         subscriptionListener?.onNewConnection(wsRequest.sessionId)
-        val context = contextResolver.resolveContext(wsRequest)
-        sessionStore.saveContext(wsRequest.sessionId, context)
-        subscriptionListener?.onConnected(wsRequest.sessionId, context)
+
+
+        val ctx = GraphQLContext
+            .newContext()
+            .of(contextResolver.resolveContext(wsRequest))
+            .argumentTypeResolver(jsonSerializer)
+            .build()
+        sessionStore.saveContext(wsRequest.sessionId, ctx)
+        subscriptionListener?.onConnected(wsRequest.sessionId, ctx)
 
         return flowOf(serializeWebSocketPayload(connectionAck))
     }

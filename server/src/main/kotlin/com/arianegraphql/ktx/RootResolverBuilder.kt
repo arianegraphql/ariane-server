@@ -6,14 +6,14 @@ import graphql.schema.idl.TypeRuntimeWiring
 class RootResolverBuilder {
     internal val rootResolver = mutableListOf<TypeRuntimeWiring.Builder>()
 
-    fun <S> type(typeName: String, builder: TypeResolverBuilder<S>.() -> Unit) {
-        rootResolver.add(TypeResolverBuilder<S>().apply(builder).build(typeName))
+    fun <S, A> type(typeName: String, builder: TypeResolverBuilder<S, A>.() -> Unit) {
+        rootResolver.add(TypeResolverBuilder<S, A>().apply(builder).build(typeName))
     }
 
-    fun RootResolverBuilder.Mutation(builder: TypeResolverBuilder<GraphQLTypes.Mutation>.() -> Unit) =
+    fun RootResolverBuilder.Mutation(builder: TypeResolverBuilder<GraphQLTypes.Mutation, Nothing>.() -> Unit) =
         type(TYPE_MUTATION_NAME, builder)
 
-    fun RootResolverBuilder.Query(builder: TypeResolverBuilder<GraphQLTypes.Query>.() -> Unit) =
+    fun RootResolverBuilder.Query(builder: TypeResolverBuilder<GraphQLTypes.Query, Nothing>.() -> Unit) =
         type(TYPE_QUERY_NAME, builder)
 
     fun RootResolverBuilder.Subscription(builder: SubscriptionTypeResolverBuilder.() -> Unit) {

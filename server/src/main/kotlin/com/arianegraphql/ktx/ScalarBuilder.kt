@@ -5,9 +5,6 @@ import graphql.schema.GraphQLScalarType
 
 @GraphQLSchemaDslMarker
 class ScalarBuilder<I, O> {
-
-    var description: String? = null
-
     lateinit var serialize: (dataFetcherResult: Any) -> O
     lateinit var parseValue: (input: Any) -> I
     lateinit var parseLiteral: (input: Any) -> I
@@ -26,7 +23,6 @@ class ScalarBuilder<I, O> {
 
     fun build(name: String) = GraphQLScalarType.newScalar()
         .name(name)
-        .description(description)
         .coercing(object : Coercing<I, O> {
 
             override fun serialize(dataFetcherResult: Any) = this@ScalarBuilder.serialize(dataFetcherResult)

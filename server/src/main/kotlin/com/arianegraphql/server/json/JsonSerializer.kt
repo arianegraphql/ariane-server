@@ -1,10 +1,11 @@
 package com.arianegraphql.server.json
 
+import com.arianegraphql.ktx.ArgumentTypeResolver
 import com.arianegraphql.server.graphql.GraphQLRequest
 import com.arianegraphql.server.graphql.GraphQLResponse
 import com.arianegraphql.server.request.WebSocketPayload
 
-interface JsonSerializer {
+interface JsonSerializer: ArgumentTypeResolver {
 
     fun parseRequest(body: String): GraphQLRequest
 

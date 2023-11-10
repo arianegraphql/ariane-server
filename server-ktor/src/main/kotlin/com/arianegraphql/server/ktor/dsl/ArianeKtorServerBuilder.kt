@@ -20,7 +20,8 @@ class ArianeKtorServerBuilder : ArianeServerBuilder() {
 fun arianeServer(builder: ArianeKtorServerBuilder.() -> Unit): ArianeKtorServerConfiguration {
     val config = ArianeKtorServerBuilder().apply(builder)
 
-    val schema = makeExecutableSchema(config.schema ?: throw IllegalStateException("Missing schema"), config.build())
+    val schema = makeExecutableSchema(config.schema ?: throw IllegalStateException("Missing schema"), config.runtimeWiringBuilder.build())
+
     val graphQLSchema = GraphQL
         .newGraphQL(schema)
         .build()

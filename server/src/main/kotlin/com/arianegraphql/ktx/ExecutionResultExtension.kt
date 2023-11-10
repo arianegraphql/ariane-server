@@ -1,4 +1,4 @@
-package com.arianegraphql.server.extensions
+package com.arianegraphql.ktx
 
 import com.arianegraphql.server.graphql.GraphQLResponse
 import com.arianegraphql.server.request.*
