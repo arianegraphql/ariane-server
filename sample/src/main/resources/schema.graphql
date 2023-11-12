@@ -27,6 +27,8 @@ type Mutation {
 
     mutationWithNullableEnum(input: ProductType): ProductType
 
+    mutationWithEnumArrayTest(input: [[ProductType]]!): [ProductType!]!
+
 
 
 
@@ -46,11 +48,11 @@ type Mutation {
 
 
 
-    mutationWithScalar(input: Date!): ResultObject!
+    #mutationWithScalar(input: Date!): ResultObject!
 
-    mutationWithScalarArray(input: [Date!]!): [ResultObject!]!
+    #mutationWithScalarArray(input: [Date!]!): [ResultObject!]!
 
-    mutationWithNullableScalar(input: Date): ResultObject
+    #mutationWithNullableScalar(input: Date): ResultObject
 }
 
 type Query {

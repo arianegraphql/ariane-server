@@ -1,26 +1,27 @@
 package com.arianegraphql.codegen.generator
 
+import com.arianegraphql.codegen.ktx.asKotlinType
 import com.arianegraphql.ktx.RootResolverBuilder
 import com.arianegraphql.ktx.TypeResolverBuilder
 import com.google.devtools.ksp.processing.KSPLogger
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import com.squareup.kotlinpoet.TypeName
 import graphql.language.*
-import java.math.BigDecimal
-import java.math.BigInteger
 
 fun ObjectTypeDefinition.generateFile(logger: KSPLogger): FileSpec {
     val packageName = "com.arianegraphql.codegen.type"
 
     val constructor = FunSpec.constructorBuilder()
-        .addParameters(fieldDefinitions.mapNotNull { it.toParameter(this, logger) })
+        .addParameters(fieldDefinitions.map { it.toParameter(logger) })
         .build()
 
-    val classSpec = TypeSpec.classBuilder(name)
-        .addModifiers(KModifier.DATA)
+    val classSpec = TypeSpec.classBuilder(name).apply {
+        if (fieldDefinitions.isNotEmpty()) {
+            addModifiers(KModifier.DATA)
+        }
+    }
         .primaryConstructor(constructor)
-        .addProperties(fieldDefinitions.mapNotNull { it.toProperty(this, logger) })
+        .addProperties(fieldDefinitions.map { it.toProperty(logger) })
         .build()
 
     return FileSpec.builder(packageName, name)
@@ -33,13 +34,16 @@ fun InputObjectTypeDefinition.generateFile(logger: KSPLogger): FileSpec {
     val packageName = "com.arianegraphql.codegen.type"
 
     val constructor = FunSpec.constructorBuilder()
-        .addParameters(inputValueDefinitions.mapNotNull { it.toParameter(this, logger) })
+        .addParameters(inputValueDefinitions.map { it.toParameter(logger) })
         .build()
 
-    val classSpec = TypeSpec.classBuilder(name)
-        .addModifiers(KModifier.DATA)
+    val classSpec = TypeSpec.classBuilder(name).apply {
+        if (inputValueDefinitions.isNotEmpty()) {
+            addModifiers(KModifier.DATA)
+        }
+    }
         .primaryConstructor(constructor)
-        .addProperties(inputValueDefinitions.mapNotNull { it.toProperty(this, logger) })
+        .addProperties(inputValueDefinitions.map { it.toProperty(logger) })
         .build()
 
     return FileSpec.builder(packageName, name)
@@ -47,21 +51,15 @@ fun InputObjectTypeDefinition.generateFile(logger: KSPLogger): FileSpec {
         .build()
 }
 
-fun FieldDefinition.toParameter(parent: ObjectTypeDefinition, logger: KSPLogger): ParameterSpec? {
-    val type = this.type.asKotlinType() ?: run {
-        logger.warn("Impossible to generate field ${parent.name}.${name}")
-        return null
-    }
+fun FieldDefinition.toParameter(logger: KSPLogger): ParameterSpec {
+    val type = this.type.asKotlinType(logger)
 
     return ParameterSpec.builder(this.name, type)
         .build()
 }
 
-fun FieldDefinition.toProperty(parent: ObjectTypeDefinition, logger: KSPLogger): PropertySpec? {
-    val type = this.type.asKotlinType() ?: run {
-        logger.warn("Impossible to generate field ${parent.name}.${name}")
-        return null
-    }
+fun FieldDefinition.toProperty(logger: KSPLogger): PropertySpec {
+    val type = this.type.asKotlinType(logger)
 
     return PropertySpec
         .builder(name, type)
@@ -70,57 +68,20 @@ fun FieldDefinition.toProperty(parent: ObjectTypeDefinition, logger: KSPLogger):
 }
 
 
-fun InputValueDefinition.toParameter(parent: InputObjectTypeDefinition, logger: KSPLogger): ParameterSpec? {
-    val type = this.type.asKotlinType() ?: run {
-        logger.warn("Impossible to generate field ${parent.name}.${name}")
-        return null
-    }
+fun InputValueDefinition.toParameter(logger: KSPLogger): ParameterSpec {
+    val type = this.type.asKotlinType(logger)
 
     return ParameterSpec.builder(this.name, type)
         .build()
 }
 
-fun InputValueDefinition.toProperty(parent: InputObjectTypeDefinition, logger: KSPLogger): PropertySpec? {
-    val type = this.type.asKotlinType() ?: run {
-        logger.warn("Impossible to generate field ${parent.name}.${name}")
-        return null
-    }
+fun InputValueDefinition.toProperty(logger: KSPLogger): PropertySpec {
+    val type = this.type.asKotlinType(logger)
 
     return PropertySpec
         .builder(name, type)
         .initializer(name)
         .build()
-}
-
-fun Type<*>.asKotlinType(): TypeName? {
-    var isNullable = false
-    val typeName = when (this) {
-        is NonNullType -> {
-            (type as graphql.language.TypeName).name
-        }
-
-        is graphql.language.TypeName -> {
-            isNullable = true
-            name
-        }
-
-
-        else -> null
-    } ?: return null
-
-    return when (typeName) {
-        "String" -> STRING
-        "Boolean" -> BOOLEAN
-        "Int" -> INT
-        "Float" -> FLOAT
-        "ID" -> STRING
-        "Long" -> LONG
-        "Short" -> SHORT
-        "Byte" -> BYTE
-        "BigDecimal" -> typeNameOf<BigDecimal>()
-        "BigInteger" -> typeNameOf<BigInteger>()
-        else -> ClassName("com.arianegraphql.codegen.type", typeName)
-    }.copy(nullable = isNullable)
 }
 
 fun ObjectTypeDefinition.generateRootResolver(): FunSpec {
