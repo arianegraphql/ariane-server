@@ -25,6 +25,7 @@ fun main() {
         }
 
         scalar("Date") {
+
             serialize { result -> (result as? Instant)?.toString() }
 
             parseValue { input -> (input as? String)?.let(Instant::parse) }
