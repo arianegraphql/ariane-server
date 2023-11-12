@@ -7,7 +7,7 @@ import graphql.language.FieldDefinition
 fun FieldDefinition.generateArgument(parent: ClassName, logger: KSPLogger): FileSpec {
     val packageName = "com.arianegraphql.codegen.type"
 
-    val className = "${parent.simpleName}${name.replaceFirstChar { it.uppercase() }}Argument"
+    val className = generatedArgumentClassName(parent)
 
     val constructor = FunSpec.constructorBuilder()
         .addParameters(inputValueDefinitions.map { it.toParameter(logger) })
@@ -26,3 +26,5 @@ fun FieldDefinition.generateArgument(parent: ClassName, logger: KSPLogger): File
         .addType(classSpec)
         .build()
 }
+
+fun FieldDefinition.generatedArgumentClassName(parent: ClassName) = "${parent.simpleName}${name.replaceFirstChar { it.uppercase() }}Argument"

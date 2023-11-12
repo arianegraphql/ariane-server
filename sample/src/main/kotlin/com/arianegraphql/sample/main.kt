@@ -1,5 +1,7 @@
 package com.arianegraphql.sample
 
+import com.arianegraphql.codegen.resolver.*
+import com.arianegraphql.codegen.type.ResultObject
 import com.arianegraphql.server.ktor.dsl.arianeServer
 import com.arianegraphql.server.ktor.launch
 import com.arianegraphql.ktx.loadSchema
@@ -33,53 +35,59 @@ fun main() {
         resolvers {
             Mutation {
 
-                resolve("mutationWithEnum") { args: MutationWithEnumArguments ->
-                    println("Received ${args.input}")
+                mutationWithEnum {
+                    println("Received ${it.input}")
 
                     ProductType.PRODUCT_A
                 }
 
-                resolve<MutationWithEnumArrayArguments>("mutationWithEnumArray") { (input) ->
-                    println("Received $input")
+                mutationWithEnumArray {
+                    println("Received ${it.input}")
 
                     ProductType.values()
                 }
 
-                resolve<MutationWithNullableEnumArguments>("mutationWithNullableEnum") { (input) ->
-                    println("Received $input")
+                mutationWithNullableEnum {
+                    println("Received ${it.input}")
 
                     null
                 }
 
-                resolve("mutationWithInputObject") { args: MutationWithInputObjectArguments ->
-                    println("Received ${args.input}")
+                mutationWithInputObject {
+                    println("Received ${it.input}")
 
                     ResultObject("a", "b", "c", ProductType.UNKNOWN)
                 }
 
-                resolve<MutationWithInputObjectArrayArguments>("mutationWithInputObjectArray") { (input) ->
-                    println("Received $input")
+                mutationWithInputObjectArray {
+                    println("Received ${it.input}")
 
                     listOf(ResultObject("a", "b", "c", ProductType.UNKNOWN))
                 }
 
-                resolve<MutationWithNullableInputObjectArguments>("mutationWithNullableInputObject") { (input) ->
+                mutationWithInputObjectArray { (input) ->
                     println("Received $input")
 
                     null
                 }
 
-                resolve<MutationWithValuesArguments>("mutationWithValues") { (string) ->
+                mutationWithValues { (string) ->
                     println("Received $string")
 
                     ResultObject("a", "b", "c", ProductType.UNKNOWN)
                 }
 
-                resolve("mutationWithNullableValues") {
-                    val string = it["string"]
+                mutationWithNullableValues {
+                    val string = it.string
                     println("Received $string")
 
                     null
+                }
+
+                mutationWithInputObjectArray {
+                    println("Received ${it.input}")
+
+                    listOf(ResultObject("a", "b", "c", ProductType.UNKNOWN))
                 }
 
                 resolve<MutationWithScalar>("mutationWithScalar") { (input) ->
@@ -100,7 +108,6 @@ fun main() {
                     null
                 }
             }
-
         }
     }.launch()
 }

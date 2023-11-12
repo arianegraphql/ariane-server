@@ -26,26 +26,34 @@ fun ObjectTypeDefinition.generateAllResolvers(parent: ClassName, logger: KSPLogg
 
 
 fun FieldDefinition.generateResolverFunction(parent: ClassName, fileSpecBuilder: FileSpec.Builder) {
-    val functionReceiver = TypeResolverBuilder::class.asClassName().parameterizedBy(parent).copy(
-        annotations = emptyList()
-    )
+    val argumentClassName = ClassName("com.arianegraphql.codegen.type", generatedArgumentClassName(parent))
 
-    fileSpecBuilder
-        .addFunction(
-            FunSpec.builder(name)
-                .receiver(functionReceiver)
-                .addParameter(functionalResolverLambdaParameter(parent))
-                .addCode("resolve(%S, $RESOLVER_PARAMETER_NAME)", name)
-                .build()
-        )
+    val functionReceiver = TypeResolverBuilder::class.asClassName()
+        .parameterizedBy(parent)
+        .copy(annotations = emptyList())
+
+    val function = FunSpec.builder(name)
+        .receiver(functionReceiver)
+        .addParameter(functionalResolverLambdaParameter(parent, argumentClassName))
+        .addCode("resolve(%S, $RESOLVER_PARAMETER_NAME)", name)
+        .build()
+
+
+    fileSpecBuilder.addFunction(function)
 }
 
-private fun functionalResolverLambdaParameter(className: ClassName) = ParameterSpec.builder(
-    RESOLVER_PARAMETER_NAME,
-    LambdaTypeName.get(
-        receiver = ResolverParameters::class.asClassName().parameterizedBy(className),
-        returnType = typeNameOf<Any?>()
-    ).copy(suspending = true)
-).build()
+private fun functionalResolverLambdaParameter(className: ClassName, argumentType: ClassName): ParameterSpec {
+    val receiver = ResolverParameters::class.asClassName().parameterizedBy(className)
+    val argumentParam = ParameterSpec.builder("argument", argumentType).build()
+
+    return ParameterSpec.builder(
+        RESOLVER_PARAMETER_NAME,
+        LambdaTypeName.get(
+            receiver = receiver,
+            parameters = listOf(argumentParam),
+            returnType = typeNameOf<Any?>()
+        ).copy(suspending = true),
+    ).build()
+}
 
 private const val RESOLVER_PARAMETER_NAME = "resolver"

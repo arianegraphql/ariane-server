@@ -6,7 +6,7 @@ import kotlinx.coroutines.reactive.asPublisher
 import org.reactivestreams.Publisher
 
 @GraphQLSchemaDslMarker
-class SubscriptionTypeResolverBuilder : TypeResolverBuilder<GraphQLTypes.Subscription, Nothing>() {
+class SubscriptionTypeResolverBuilder : TypeResolverBuilder<GraphQLTypes.Subscription>() {
 
     inline fun <T : Any, reified A> resolve(field: String, flow: Flow<T>) = resolve<T, A>(field, flow.asPublisher())
 

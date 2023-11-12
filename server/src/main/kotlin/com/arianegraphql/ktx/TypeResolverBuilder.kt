@@ -4,7 +4,7 @@ import graphql.schema.DataFetcher
 import graphql.schema.idl.TypeRuntimeWiring
 
 @GraphQLSchemaDslMarker
-open class TypeResolverBuilder<S, A> {
+open class TypeResolverBuilder<S> {
 
     val typeResolvers = mutableMapOf<String, DataFetcher<*>>()
 
