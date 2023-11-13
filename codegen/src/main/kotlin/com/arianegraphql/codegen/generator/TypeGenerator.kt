@@ -1,18 +1,17 @@
 package com.arianegraphql.codegen.generator
 
-import com.arianegraphql.codegen.ktx.asKotlinType
+import com.arianegraphql.codegen.CodegenContext
+import com.arianegraphql.codegen.ktx.kotlinType
 import com.arianegraphql.ktx.RootResolverBuilder
 import com.arianegraphql.ktx.TypeResolverBuilder
-import com.google.devtools.ksp.processing.KSPLogger
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import graphql.language.*
 
-fun ObjectTypeDefinition.generateFile(logger: KSPLogger): FileSpec {
-    val packageName = "com.arianegraphql.codegen.type"
-
+context(CodegenContext)
+fun ObjectTypeDefinition.generateFile(): FileSpec {
     val constructor = FunSpec.constructorBuilder()
-        .addParameters(fieldDefinitions.map { it.toParameter(logger) })
+        .addParameters(fieldDefinitions.map { it.asParameter })
         .build()
 
     val classSpec = TypeSpec.classBuilder(name).apply {
@@ -21,20 +20,19 @@ fun ObjectTypeDefinition.generateFile(logger: KSPLogger): FileSpec {
         }
     }
         .primaryConstructor(constructor)
-        .addProperties(fieldDefinitions.map { it.toProperty(logger) })
+        .addProperties(fieldDefinitions.map { it.asProperty })
         .build()
 
-    return FileSpec.builder(packageName, name)
+    return FileSpec.builder(packageNameTypes, name)
         .addType(classSpec)
         .addFunction(generateRootResolver())
         .build()
 }
 
-fun InputObjectTypeDefinition.generateFile(logger: KSPLogger): FileSpec {
-    val packageName = "com.arianegraphql.codegen.type"
-
+context(CodegenContext)
+fun InputObjectTypeDefinition.generateFile(): FileSpec {
     val constructor = FunSpec.constructorBuilder()
-        .addParameters(inputValueDefinitions.map { it.toParameter(logger) })
+        .addParameters(inputValueDefinitions.map { it.asParameter })
         .build()
 
     val classSpec = TypeSpec.classBuilder(name).apply {
@@ -43,53 +41,46 @@ fun InputObjectTypeDefinition.generateFile(logger: KSPLogger): FileSpec {
         }
     }
         .primaryConstructor(constructor)
-        .addProperties(inputValueDefinitions.map { it.toProperty(logger) })
+        .addProperties(inputValueDefinitions.map { it.asProperty })
         .build()
 
-    return FileSpec.builder(packageName, name)
+    return FileSpec.builder(packageNameTypes, name)
         .addType(classSpec)
         .build()
 }
 
-fun FieldDefinition.toParameter(logger: KSPLogger): ParameterSpec {
-    val type = this.type.asKotlinType(logger)
-
-    return ParameterSpec.builder(this.name, type)
+context(CodegenContext)
+val FieldDefinition.asParameter: ParameterSpec
+    get() = ParameterSpec.builder(this.name, type.kotlinType)
         .build()
-}
 
-fun FieldDefinition.toProperty(logger: KSPLogger): PropertySpec {
-    val type = this.type.asKotlinType(logger)
-
-    return PropertySpec
-        .builder(name, type)
+context(CodegenContext)
+val FieldDefinition.asProperty: PropertySpec
+    get() = PropertySpec
+        .builder(name, type.kotlinType)
         .initializer(name)
         .build()
-}
 
 
-fun InputValueDefinition.toParameter(logger: KSPLogger): ParameterSpec {
-    val type = this.type.asKotlinType(logger)
-
-    return ParameterSpec.builder(this.name, type)
+context(CodegenContext)
+val InputValueDefinition.asParameter: ParameterSpec
+    get() = ParameterSpec.builder(this.name, type.kotlinType)
         .build()
-}
 
-fun InputValueDefinition.toProperty(logger: KSPLogger): PropertySpec {
-    val type = this.type.asKotlinType(logger)
-
-    return PropertySpec
-        .builder(name, type)
+context(CodegenContext)
+val InputValueDefinition.asProperty: PropertySpec
+    get() = PropertySpec
+        .builder(name, type.kotlinType)
         .initializer(name)
         .build()
-}
 
+context(CodegenContext)
 fun ObjectTypeDefinition.generateRootResolver(): FunSpec {
     val functionReceiver = typeNameOf<RootResolverBuilder>().copy(
         annotations = emptyList()
     )
 
-    val className = ClassName("com.arianegraphql.codegen.type", name)
+    val className = ClassName(packageNameTypes, name)
 
     return FunSpec.builder(name)
         .receiver(functionReceiver)

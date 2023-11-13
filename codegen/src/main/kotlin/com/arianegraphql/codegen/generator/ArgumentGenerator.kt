@@ -1,16 +1,15 @@
 package com.arianegraphql.codegen.generator
 
-import com.google.devtools.ksp.processing.KSPLogger
+import com.arianegraphql.codegen.CodegenContext
 import com.squareup.kotlinpoet.*
 import graphql.language.FieldDefinition
 
-fun FieldDefinition.generateArgument(parent: ClassName, logger: KSPLogger): FileSpec {
-    val packageName = "com.arianegraphql.codegen.type"
-
+context(CodegenContext)
+fun FieldDefinition.generateArgument(parent: ClassName): FileSpec {
     val className = generatedArgumentClassName(parent)
 
     val constructor = FunSpec.constructorBuilder()
-        .addParameters(inputValueDefinitions.map { it.toParameter(logger) })
+        .addParameters(inputValueDefinitions.map { it.asParameter })
         .build()
 
     val classSpec = TypeSpec.classBuilder(className).apply {
@@ -19,10 +18,10 @@ fun FieldDefinition.generateArgument(parent: ClassName, logger: KSPLogger): File
         }
     }
         .primaryConstructor(constructor)
-        .addProperties(inputValueDefinitions.map { it.toProperty(logger) })
+        .addProperties(inputValueDefinitions.map { it.asProperty })
         .build()
 
-    return FileSpec.builder(packageName, className)
+    return FileSpec.builder(packageNameTypes, className)
         .addType(classSpec)
         .build()
 }

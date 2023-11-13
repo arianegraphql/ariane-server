@@ -26,4 +26,5 @@ kotlin.sourceSets.main {
 
 ksp {
     arg("graphql-schema", file("src/main/resources/schema.graphql").path)
+    arg("ariane-config", file("src/main/resources/codegen.json").path)
 }
