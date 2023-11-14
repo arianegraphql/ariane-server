@@ -25,7 +25,7 @@ value class FunctionalResolver<S, A>(
 
 inline fun <S, reified A> Resolver<S, A>.toDataFetcher(): DataFetcher<Any?> = DataFetcher { env ->
     runBlocking {
-        val args = env.graphQlContext.argumentTypeResolver.resolve(A::class.java, env.arguments)
+        val args = env.graphQlContext.argumentTypeResolver.resolve(A::class.java, env.arguments, env.graphQlContext)
         resolve(args, env.getSource(), env.graphQlContext, env)
     }
 }

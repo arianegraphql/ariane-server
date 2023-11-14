@@ -40,16 +40,16 @@ fun ArianeKtorServerConfiguration.launch(wait: Boolean = true) {
         routing {
             route(path) {
                 post {
-                    handleGraphQLRequest(arianeServer)
+                    with(arianeServer) { handleGraphQLRequest() }
                 }
 
                 get {
-                    handleGraphQLRequest(arianeServer)
+                    with(arianeServer) { handleGraphQLRequest() }
                 }
             }
 
             webSocket(path, "graphql-ws") {
-                handleGraphQLSubscription(arianeServer)
+                with(arianeServer) { handleGraphQLSubscription() }
             }
         }
     }.start(wait = wait)

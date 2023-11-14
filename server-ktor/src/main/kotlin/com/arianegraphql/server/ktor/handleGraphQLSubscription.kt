@@ -8,7 +8,8 @@ import io.ktor.websocket.*
 import kotlinx.coroutines.launch
 import java.util.*
 
-suspend fun WebSocketServerSession.handleGraphQLSubscription(arianeServer: ArianeServer) {
+context(ArianeServer)
+suspend fun WebSocketServerSession.handleGraphQLSubscription() {
     val sessionId = UUID.randomUUID().toString()
 
     try {
@@ -19,13 +20,13 @@ suspend fun WebSocketServerSession.handleGraphQLSubscription(arianeServer: Arian
             val request = WebSocketRequest(sessionId, payload, headers)
 
             launch {
-                arianeServer.handleWebSocketMessage(request).collect { response ->
+                handleWebSocketMessage(request).collect { response ->
                     outgoing.send(Frame.Text(response))
                 }
             }
 
         }
     } finally {
-        arianeServer.handleClosedWebSocket(sessionId)
+        handleClosedWebSocket(sessionId)
     }
 }
