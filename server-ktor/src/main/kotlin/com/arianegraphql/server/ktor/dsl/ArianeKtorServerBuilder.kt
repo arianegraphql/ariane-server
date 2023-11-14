@@ -28,6 +28,7 @@ fun arianeServer(builder: ArianeKtorServerBuilder.() -> Unit): ArianeKtorServerC
 
     return ArianeKtorServerConfiguration(
         graphQLSchema,
+        config.registeredScalarTypes,
         config.host,
         config.port,
         config.path,

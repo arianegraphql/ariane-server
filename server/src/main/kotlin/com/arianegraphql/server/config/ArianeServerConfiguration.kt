@@ -7,9 +7,11 @@ import com.arianegraphql.server.listener.RequestListener
 import com.arianegraphql.server.listener.ServerListener
 import com.arianegraphql.server.listener.SubscriptionListener
 import graphql.GraphQL
+import graphql.schema.Coercing
 
 open class ArianeServerConfiguration(
     val schema: GraphQL,
+    val scalarTypes: Map<Class<*>, Coercing<*, *>>,
     val host: String,
     val port: Int,
     val path: String,
@@ -22,4 +24,4 @@ open class ArianeServerConfiguration(
 )
 
 fun ArianeServerConfiguration.newArianeServer(jsonSerializer: JsonSerializer) =
-    ArianeServerImpl(schema, isPlaygroundEnabled, contextResolver, requestListener, subscriptionListener, jsonSerializer)
+    ArianeServerImpl(schema, scalarTypes, isPlaygroundEnabled, contextResolver, requestListener, subscriptionListener, jsonSerializer)

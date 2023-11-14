@@ -13,10 +13,12 @@ import com.arianegraphql.server.request.*
 import com.arianegraphql.server.response.HttpResponse
 import graphql.GraphQL
 import graphql.GraphQLContext
+import graphql.schema.Coercing
 import kotlinx.coroutines.flow.*
 
 class ArianeServerImpl(
     private val schema: GraphQL,
+    private val scalarTypes: Map<Class<*>, Coercing<*, *>>,
     private val isPlaygroundEnabled: Boolean,
     private val contextResolver: ContextResolver,
     private val requestListener: RequestListener?,
@@ -24,9 +26,21 @@ class ArianeServerImpl(
     private val jsonSerializer: JsonSerializer,
     playgroundRenderer: PlaygroundRenderer = PlaygroundRendererImpl(),
     requestPerformer: RequestPerformer = RequestPerformerImpl(schema),
-    subscriptionHandler: SubscriptionHandler = SubscriptionHandlerImpl(jsonSerializer, requestPerformer, requestListener, subscriptionListener)
-) : ArianeServer, PlaygroundRenderer by playgroundRenderer, JsonSerializer by jsonSerializer, RequestPerformer by requestPerformer,
+    subscriptionHandler: SubscriptionHandler = SubscriptionHandlerImpl(
+        jsonSerializer,
+        requestPerformer,
+        requestListener,
+        subscriptionListener
+    )
+) : ArianeServer, PlaygroundRenderer by playgroundRenderer, JsonSerializer by jsonSerializer,
+    RequestPerformer by requestPerformer,
     SubscriptionHandler by subscriptionHandler {
+
+    override fun initializeServer() {
+        scalarTypes.forEach {
+            jsonSerializer.registerResolverType(it.key, it.value)
+        }
+    }
 
     override suspend fun handleHttpRequest(httpRequest: HttpRequest, onResponse: suspend (HttpResponse) -> Unit) {
         requestListener?.onReceived(httpRequest)

@@ -1,10 +1,13 @@
 package com.arianegraphql.ktx
 
 import graphql.GraphQLContext
+import graphql.schema.Coercing
 
 interface ArgumentTypeResolver {
 
     fun <T> resolve(type: Class<T>, value: Map<String, Any>): T
+
+    fun registerResolverType(type: Class<*>, coercing: Coercing<*, *>)
 }
 
 val GraphQLContext.argumentTypeResolver: ArgumentTypeResolver

@@ -87,7 +87,7 @@ val myServer = arianeServer {
                 listOf(ResultObject("a", "b", "c", ProductType.UNKNOWN))
             }
 
-            resolve<MutationWithScalar>("mutationWithScalar") { (input) ->
+            mutationWithScalar { (input) ->
                 println("Received $input")
 
                 ResultObject("a", "b", "c", ProductType.UNKNOWN)

@@ -9,17 +9,19 @@ import graphql.schema.idl.TypeRuntimeWiring
 @GraphQLSchemaDslMarker
 open class RuntimeWiringBuilder {
     val runtimeWiringBuilder: RuntimeWiring.Builder = newRuntimeWiring()
+    val registeredScalarTypes: MutableMap<Class<*>, Coercing<*, *>> = mutableMapOf()
 
     fun resolvers(builder: RootResolverBuilder.() -> Unit) =
-    addResolvers(RootResolverBuilder().apply(builder).build())
+        addResolvers(RootResolverBuilder().apply(builder).build())
 
-    fun addResolvers(resolvers: List<TypeRuntimeWiring.Builder> ) = resolvers.forEach(runtimeWiringBuilder::type)
+    fun addResolvers(resolvers: List<TypeRuntimeWiring.Builder>) = resolvers.forEach(runtimeWiringBuilder::type)
 
-    fun scalar(scalar: GraphQLScalarType) {
+    inline fun <reified T> scalar(scalar: GraphQLScalarType) {
         runtimeWiringBuilder.scalar(scalar)
+        registeredScalarTypes[T::class.java] = scalar.coercing
     }
 
-    fun <I, O> scalar(name: String, description: String = "", coercing: Coercing<I, O>) = scalar(
+    inline fun <reified I, O> scalar(name: String, description: String = "", coercing: Coercing<I, O>) = scalar<I>(
         GraphQLScalarType
             .newScalar()
             .name(name)
@@ -28,6 +30,6 @@ open class RuntimeWiringBuilder {
             .build()
     )
 
-    fun <I, O> scalar(name: String, builder: ScalarBuilder<I?, O?>.() -> Unit) =
-        scalar(ScalarBuilder<I?, O?>().apply(builder).build(name))
+    inline fun <reified I, O> scalar(name: String, builder: ScalarBuilder<I?, O?>.() -> Unit) =
+        scalar<I>(ScalarBuilder<I?, O?>().apply(builder).build(name))
 }
