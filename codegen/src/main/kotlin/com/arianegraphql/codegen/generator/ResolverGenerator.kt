@@ -4,7 +4,6 @@ import com.arianegraphql.codegen.CodegenContext
 import com.arianegraphql.ktx.Resolver
 import com.arianegraphql.ktx.ResolverParameters
 import com.arianegraphql.ktx.TypeResolverBuilder
-import com.google.devtools.ksp.processing.KSPLogger
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import graphql.language.FieldDefinition

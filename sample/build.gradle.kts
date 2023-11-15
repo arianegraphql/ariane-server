@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("com.google.devtools.ksp")
+    id("com.arianegraphql.codegen")
 }
 
 group = "com.arianegraphql"
@@ -22,6 +23,11 @@ kotlin.sourceSets.main {
     kotlin.srcDirs(
         file("${layout.buildDirectory}/generated/ksp/main/kotlin"),
     )
+}
+
+ariane {
+    schema(file("src/main/resources/schema.graphql"))
+    configuration(file("src/main/resources/codegen.json"))
 }
 
 ksp {

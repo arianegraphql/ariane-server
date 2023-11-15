@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "com.arianegraphql"
-version = "0.2.0"
+version = "0.2.2"
 
 subprojects {
     tasks.withType<KotlinCompile> {
@@ -84,7 +84,7 @@ subprojects {
                 }
             }
         }
-        signing {
+        /*signing {
             setRequired {
                 gradle.taskGraph.hasTask("publish")
             }
@@ -94,7 +94,7 @@ subprojects {
 
             useInMemoryPgpKeys(signingKey, signingPassword)
             sign(publishing.publications)
-        }
+        }*/
     }
 }
 
