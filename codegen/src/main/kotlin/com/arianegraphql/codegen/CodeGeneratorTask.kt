@@ -23,4 +23,8 @@ abstract class CodeGeneratorTask : DefaultTask() {
         println("[MELVIN] Schema = ${schema.orNull?.asFile?.absolutePath}")
         println("[MELVIN] Config = ${configuration.orNull?.asFile?.absolutePath}")
     }
+
+    companion object {
+        const val TaskName = "arianegraphql-codegen"
+    }
 }
