@@ -1,5 +1,6 @@
 package com.arianegraphql.sample
 
+/*
 import com.arianegraphql.codegen.resolver.MutationWithEnumResolver
 import com.arianegraphql.codegen.type.MutationMutationWithEnumArgument
 import com.arianegraphql.ktx.GraphQLTypes
@@ -17,4 +18,4 @@ class MutationWithEnumResolverImpl: MutationWithEnumResolver {
         TODO("Not yet implemented")
     }
 
-}
+}*/

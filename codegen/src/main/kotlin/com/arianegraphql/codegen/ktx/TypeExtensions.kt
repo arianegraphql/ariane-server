@@ -31,4 +31,4 @@ private val graphql.language.NonNullType.nonNullType: TypeName
 
 context(CodegenContext)
 private val graphql.language.TypeName.nullableType: TypeName
-    get() = (scalarTypes[name] ?: ClassName("com.arianegraphql.codegen.type", name)).copy(nullable = true)
+    get() = (scalarTypes[name] ?: ClassName(packageNameTypes, name)).copy(nullable = true)

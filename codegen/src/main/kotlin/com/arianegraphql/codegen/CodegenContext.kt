@@ -1,12 +1,15 @@
 package com.arianegraphql.codegen
 
-import com.arianegraphql.codegen.options.CodegenOptions
-import com.google.devtools.ksp.processing.KSPLogger
-import com.squareup.kotlinpoet.TypeName
+import com.squareup.kotlinpoet.*
+import graphql.schema.idl.TypeDefinitionRegistry
+import org.gradle.api.logging.Logger
+import java.io.File
 
 data class CodegenContext(
-    val logger: KSPLogger,
+    val logger: Logger,
     val scalarTypes: Map<String, TypeName>,
+    val graphQLSchema: TypeDefinitionRegistry,
+    val buildDir: File,
     val packageName: String,
 ) {
 
@@ -15,12 +18,8 @@ data class CodegenContext(
 
     val packageNameResolvers: String
         get() = "$packageName.resolver"
+
+    companion object {
+        const val DefaultPackageName = "com.arianegraphql.codegen"
+    }
 }
-
-fun CodegenOptions.codegenContext(logger: KSPLogger, scalarTypes: Map<String, TypeName>) = CodegenContext(
-    logger,
-    scalarTypes,
-    packageName ?: DefaultPackageName
-)
-
-const val DefaultPackageName = "com.arianegraphql.codegen"
