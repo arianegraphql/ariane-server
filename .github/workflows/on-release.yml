@@ -84,4 +84,4 @@ jobs:
         shell: bash
         run: 'echo "$GRADLE_PROPERTIES" > gradle.properties'
       - name: Deploy codegen plugin
-        run: cd server/ && ../gradlew :codegen:publishToSonatype
+        run: cd server/ && ../gradlew :codegen:publishPluginMavenPublicationToSonatypeRepository
