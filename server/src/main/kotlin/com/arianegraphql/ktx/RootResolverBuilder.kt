@@ -10,16 +10,19 @@ class RootResolverBuilder {
         rootResolver.add(TypeResolverBuilder<S>().apply(builder).build(typeName))
     }
 
-    fun Mutation(builder: TypeResolverBuilder<GraphQLTypes.Mutation>.() -> Unit) = type(TYPE_MUTATION_NAME, builder)
+    fun RootResolverBuilder.Mutation(builder: TypeResolverBuilder<GraphQLTypes.Mutation>.() -> Unit) =
+        type(TYPE_MUTATION_NAME, builder)
 
-    fun Query(builder: TypeResolverBuilder<GraphQLTypes.Query>.() -> Unit) = type(TYPE_QUERY_NAME, builder)
+    fun RootResolverBuilder.Query(builder: TypeResolverBuilder<GraphQLTypes.Query>.() -> Unit) =
+        type(TYPE_QUERY_NAME, builder)
 
-    fun Subscription(builder: SubscriptionTypeResolverBuilder.() -> Unit) {
+    fun RootResolverBuilder.Subscription(builder: SubscriptionTypeResolverBuilder.() -> Unit) {
         rootResolver.add(SubscriptionTypeResolverBuilder().apply(builder).build(TYPE_SUBSCRIPTION_NAME))
     }
 
     fun build() = rootResolver
 }
+
 
 const val TYPE_MUTATION_NAME = "Mutation"
 const val TYPE_QUERY_NAME = "Query"

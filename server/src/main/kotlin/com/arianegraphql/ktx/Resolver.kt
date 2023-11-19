@@ -4,25 +4,28 @@ import graphql.GraphQLContext
 import graphql.schema.DataFetcher
 import kotlinx.coroutines.runBlocking
 
-interface Resolver<S> {
-    suspend fun resolve(arguments: Argument, source: S, context: GraphQLContext, info: Info): Any?
+interface Resolver<S, A> {
+    suspend fun resolve(arguments: A, source: S, context: GraphQLContext, info: Info): Any?
 }
 
-@JvmInline value class FunctionalResolver<S>(
-    private val lambda: suspend (parameters: ResolverParameters<S>) -> Any?
-) : Resolver<S> {
+@JvmInline
+value class FunctionalResolver<S, A>(
+    private val lambda: suspend ResolverParameters<S>.(A) -> Any?
+) : Resolver<S, A> {
 
     override suspend fun resolve(
-        arguments: Argument,
+        arguments: A,
         source: S,
         context: GraphQLContext,
         info: Info
-    ) = lambda(ResolverParameters(arguments, source, context, info))
+    ): Any? = with(ResolverParameters(source, context, info)) {
+        return@with lambda(arguments)
+    }
 }
 
-internal fun <S> Resolver<S>.toDataFetcher(): DataFetcher<Any?> = DataFetcher { env ->
+inline fun <S, reified A> Resolver<S, A>.toDataFetcher(): DataFetcher<Any?> = DataFetcher { env ->
     runBlocking {
-        env.graphQlContext
-        resolve(DataFetchingArgument(env), env.getSource(), env.graphQlContext, env)
+        val args = env.graphQlContext.argumentTypeResolver.resolve(A::class.java, env.arguments, env.graphQlContext)
+        resolve(args, env.getSource(), env.graphQlContext, env)
     }
 }

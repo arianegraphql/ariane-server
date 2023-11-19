@@ -9,10 +9,9 @@ import io.ktor.server.response.*
 import io.ktor.util.*
 import io.ktor.util.pipeline.*
 
-suspend fun PipelineContext<Unit, ApplicationCall>.handleGraphQLRequest(arianeServer: ArianeServer) {
-    arianeServer.handleHttpRequest(httpRequest()) { response ->
-        call.respondText(response.body, ContentType.parse(response.contentType))
-    }
+context(ArianeServer)
+suspend fun PipelineContext<Unit, ApplicationCall>.handleGraphQLRequest() = handleHttpRequest(httpRequest()) {
+    call.respondText(it.body, ContentType.parse(it.contentType))
 }
 
 suspend fun PipelineContext<Unit, ApplicationCall>.httpRequest() = HttpRequest(

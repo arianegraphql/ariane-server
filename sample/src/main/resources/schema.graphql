@@ -1,27 +1,60 @@
-type Query {
-    movies: [Movie!]
-    movie(title: String!): Movie
-    directors: [Director!]!
+input UserObjectInput {
+    userId: String!
+    userName: String
+    userBirthday: String
+    userProduct: ProductType!
+}
+
+type ResultObject {
+    attributeA: String!
+    attributeB: String!
+    attributeC: String
+    productType: ProductType
+}
+
+scalar Date
+
+enum ProductType {
+    PRODUCT_A,
+    PRODUCT_B,
+    UNKNOWN
 }
 
 type Mutation {
-    addMovie(title: String!, director: String!): Movie!
+    mutationWithEnum(input: ProductType!): ProductType!
+
+    mutationWithEnumArray(input: [ProductType!]!): [ProductType!]!
+
+    mutationWithNullableEnum(input: ProductType): ProductType
+
+    mutationWithEnumArrayTest(input: [[ProductType]]!): [ProductType!]!
+
+
+
+
+    mutationWithInputObject(input: UserObjectInput!): ResultObject!
+
+    mutationWithInputObjectArray(input: [UserObjectInput!]!): [ResultObject!]!
+
+    mutationWithNullableInputObject(input: UserObjectInput): ResultObject
+
+
+
+
+    mutationWithValues(string: String!, int: Int!, float: Float!, boolean: Boolean!): ResultObject!
+
+    mutationWithNullableValues(string: String, int: Int, float: Float, boolean: Boolean): ResultObject
+
+
+
+
+    mutationWithScalar(input: Date!): ResultObject!
+
+    mutationWithScalarArray(input: [Date!]!): [ResultObject!]!
+
+    mutationWithNullableScalar(input: Date): ResultObject
 }
 
-type Subscription {
-    onMovieAdded: Movie!
-}
-
-type Subscr {
-    addMovie(title: String!, director: String!): Movie!
-}
-
-type Movie {
-    title: String!
-    director: Director!
-}
-
-type Director {
-    name: String!
-    movies: [Movie!]
+type Query {
+    helloWorld: String
 }

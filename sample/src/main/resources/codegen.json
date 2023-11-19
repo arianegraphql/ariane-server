@@ -1,0 +1,6 @@
+{
+  "packageName": "com.example",
+  "scalars": {
+    "Date": "java.time.Instant"
+  }
+}
