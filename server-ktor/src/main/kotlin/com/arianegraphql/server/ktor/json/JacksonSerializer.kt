@@ -45,6 +45,7 @@ object JacksonSerializer : JsonSerializer {
 
     override fun registerResolverType(type: Class<*>, coercing: Coercing<*, *>) {
         val module = SimpleModule()
+
         module.addDeserializer(type, ScalarCoercingDeserializer(coercing) {
             graphQLContext ?: GraphQLContext.getDefault()
         })
