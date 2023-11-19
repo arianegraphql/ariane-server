@@ -3,8 +3,6 @@ version = project.rootProject.version
 
 plugins {
     id("java-gradle-plugin")
-    id("maven-publish")
-    kotlin("jvm")
     kotlin("plugin.serialization") version "1.8.20"
 }
 
