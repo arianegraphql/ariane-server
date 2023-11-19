@@ -12,9 +12,9 @@ open class RuntimeWiringBuilder {
     val registeredScalarTypes: MutableMap<Class<*>, Coercing<*, *>> = mutableMapOf()
 
     fun resolvers(builder: RootResolverBuilder.() -> Unit) =
-        addResolvers(RootResolverBuilder().apply(builder).build())
+        resolvers(RootResolverBuilder().apply(builder).build())
 
-    fun addResolvers(resolvers: List<TypeRuntimeWiring.Builder>) = resolvers.forEach(runtimeWiringBuilder::type)
+    fun resolvers(resolvers: List<TypeRuntimeWiring.Builder>) = resolvers.forEach(runtimeWiringBuilder::type)
 
     inline fun <reified T> scalar(scalar: GraphQLScalarType) {
         runtimeWiringBuilder.scalar(scalar)

@@ -3,9 +3,7 @@ package com.arianegraphql.dsl
 import com.arianegraphql.server.config.ArianeServerConfiguration
 import com.arianegraphql.server.context.ContextResolver
 import com.arianegraphql.server.context.FunctionalContextResolver
-import com.arianegraphql.server.listener.RequestListener
-import com.arianegraphql.server.listener.ServerListener
-import com.arianegraphql.server.listener.SubscriptionListener
+import com.arianegraphql.server.listener.*
 import com.arianegraphql.server.request.IncomingRequest
 import graphql.GraphQL
 import graphql.GraphQLContext
@@ -23,14 +21,16 @@ open class ArianeServerBuilder : RuntimeWiringBuilder() {
     var enablePlayground = true
     var enableCORS = true
 
-    var serverListener: ServerListener? = null
+    internal var onServerStarted: OnServerStarted = { _, _, _ -> }
+    internal var onServerStopped: OnServerStopped = { }
     var requestListener: RequestListener? = null
     var subscriptionListener: SubscriptionListener? = null
 
     internal var ktorPlugins: KtorPlugins? = null
 
     var contextResolver: ContextResolver = object : ContextResolver {
-        override suspend fun resolveContext(request: IncomingRequest): GraphQLContext = GraphQLContext.of(emptyMap<Any, Any>())
+        override suspend fun resolveContext(request: IncomingRequest): GraphQLContext =
+            GraphQLContext.of(emptyMap<Any, Any>())
     }
 
     fun context(contextResolver: ContextResolver) {
@@ -45,6 +45,14 @@ open class ArianeServerBuilder : RuntimeWiringBuilder() {
         this.ktorPlugins = FunctionalKtorPlugins(receiver)
     }
 
+    fun onStart(block: OnServerStarted) {
+        onServerStarted = block
+    }
+
+    fun onStop(block: OnServerStopped) {
+        onServerStopped = block
+    }
+
     companion object {
         const val DEFAULT_HOST = "0.0.0.0"
         const val DEFAULT_PORT = 80
@@ -55,7 +63,10 @@ open class ArianeServerBuilder : RuntimeWiringBuilder() {
 fun arianeServer(builder: ArianeServerBuilder.() -> Unit): ArianeServerConfiguration {
     val config = ArianeServerBuilder().apply(builder)
 
-    val schema = makeExecutableSchema(config.schema ?: throw IllegalStateException("Missing schema"), config.runtimeWiringBuilder.build())
+    val schema = makeExecutableSchema(
+        config.schema ?: throw IllegalStateException("Missing schema"),
+        config.runtimeWiringBuilder.build()
+    )
 
     val graphQLSchema = GraphQL
         .newGraphQL(schema)
@@ -70,7 +81,7 @@ fun arianeServer(builder: ArianeServerBuilder.() -> Unit): ArianeServerConfigura
         config.enablePlayground,
         config.enableCORS,
         config.contextResolver,
-        config.serverListener,
+        ServerListener(config.onServerStarted, config.onServerStopped),
         config.requestListener,
         config.subscriptionListener,
         config.ktorPlugins

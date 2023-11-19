@@ -1,16 +1,16 @@
 package com.arianegraphql.server.listener
 
-interface ServerListener {
-
+data class ServerListener(
     /**
      * Method called when the server has been started and launched.
      */
-    fun onStart(host: String, port: Int, path: String) {
-    }
+    val onStart: OnServerStarted,
 
     /**
      * Method called when the server has been stopped.
      */
-    fun onStop() {
-    }
-}
+    val onStop: OnServerStopped,
+)
+
+typealias OnServerStarted = (host: String, port: Int, path: String) -> Unit
+typealias OnServerStopped = () -> Unit

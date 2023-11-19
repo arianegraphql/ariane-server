@@ -23,6 +23,8 @@ class RootResolverBuilder {
     fun build() = rootResolver
 }
 
+fun resolvers(builder: RootResolverBuilder.() -> Unit): List<TypeRuntimeWiring.Builder> =
+    RootResolverBuilder().apply(builder).build()
 
 const val TYPE_MUTATION_NAME = "Mutation"
 const val TYPE_QUERY_NAME = "Query"
