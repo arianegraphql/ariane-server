@@ -2,13 +2,14 @@ package com.arianegraphql.dsl
 
 import io.ktor.server.application.Application
 
-interface KtorPlugin{
+interface KtorPlugins {
     fun invoke(application: Application)
 }
 
-@JvmInline value class FunctionalKtorPlugin(
+@JvmInline
+value class FunctionalKtorPlugins(
     private val receiver: Application.() -> Unit
-) : KtorPlugin {
+) : KtorPlugins {
 
     override fun invoke(application: Application) = receiver(application)
 }

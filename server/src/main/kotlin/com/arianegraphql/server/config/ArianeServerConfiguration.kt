@@ -1,5 +1,6 @@
 package com.arianegraphql.server.config
 
+import com.arianegraphql.dsl.KtorPlugins
 import com.arianegraphql.server.ArianeServerImpl
 import com.arianegraphql.server.context.ContextResolver
 import com.arianegraphql.server.json.JsonSerializer
@@ -21,6 +22,7 @@ open class ArianeServerConfiguration(
     val serverListener: ServerListener?,
     val requestListener: RequestListener?,
     val subscriptionListener: SubscriptionListener?,
+    val ktorPlugins: KtorPlugins?,
 )
 
 fun ArianeServerConfiguration.newArianeServer(jsonSerializer: JsonSerializer) =
