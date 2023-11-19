@@ -5,9 +5,6 @@ plugins {
     kotlin("plugin.serialization") version "1.8.20"
 }
 
-group = "com.arianegraphql"
-version = "0.2.2"
-
 dependencies {
     implementation("com.squareup:kotlinpoet:1.14.2")
 
