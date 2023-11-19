@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("com.arianegraphql.codegen")
 }
 
 group = "com.arianegraphql"
@@ -13,8 +12,6 @@ dependencies {
     implementation(project(":server"))
     implementation(project(":server-ktor"))
     implementation("io.ktor:ktor-server-cio:2.3.4")
-
-    implementation(project(":codegen"))
 }
 
 sourceSets {
@@ -23,9 +20,4 @@ sourceSets {
             srcDir("build/generated/ariane/main/kotlin")
         }
     }
-}
-
-ariane {
-    schema(file("src/main/resources/schema.graphql"))
-    configuration(file("src/main/resources/codegen.json"))
 }

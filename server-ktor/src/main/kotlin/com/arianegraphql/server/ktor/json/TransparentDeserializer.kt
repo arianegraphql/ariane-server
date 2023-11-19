@@ -12,8 +12,8 @@ import java.util.Locale
 
 class ScalarCoercingSerializer<T>(
     private val coercing: Coercing<*, *>,
-    private val graphQLContext: ()-> GraphQLContext,
-): JsonSerializer<T>() {
+    private val graphQLContext: () -> GraphQLContext,
+) : JsonSerializer<T>() {
 
     override fun serialize(value: T, gen: JsonGenerator, serializers: SerializerProvider) {
         gen.writeObject(coercing.serialize(value as Any, graphQLContext(), Locale.getDefault()))
@@ -22,8 +22,8 @@ class ScalarCoercingSerializer<T>(
 
 class ScalarCoercingDeserializer<T>(
     private val coercing: Coercing<*, *>,
-    private val graphQLContext: ()-> GraphQLContext,
-): JsonDeserializer<T>() {
+    private val graphQLContext: () -> GraphQLContext,
+) : JsonDeserializer<T>() {
 
     @Suppress("UNCHECKED_CAST")
     override fun deserialize(p: JsonParser, ctxt: DeserializationContext): T? {

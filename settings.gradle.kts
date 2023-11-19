@@ -1,7 +1,6 @@
 pluginManagement {
     // Versions are declared in 'gradle.properties'
     plugins {
-        id("com.arianegraphql.codegen") version "0.2.2"
         kotlin("jvm") version "1.8.20"
     }
     repositories {
