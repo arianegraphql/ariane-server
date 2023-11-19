@@ -8,11 +8,7 @@ plugins {
 }
 
 group = "com.arianegraphql"
-version = "0.2.0"
-
-repositories {
-    mavenCentral()
-}
+version = "0.3.0-beta01"
 
 subprojects {
     tasks.withType<KotlinCompile> {
@@ -30,10 +26,6 @@ subprojects {
     apply(plugin = "kotlin")
     apply(plugin = "maven-publish")
     apply(plugin = "signing")
-
-    repositories {
-        mavenCentral()
-    }
 
     dependencies {
         implementation(kotlin("stdlib"))

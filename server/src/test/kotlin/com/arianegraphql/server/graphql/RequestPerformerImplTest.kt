@@ -4,6 +4,7 @@ import com.arianegraphql.server.listener.RequestListener
 import graphql.ExecutionInput
 import graphql.ExecutionResult
 import graphql.GraphQL
+import graphql.GraphQLContext
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.slot
@@ -20,7 +21,7 @@ internal class RequestPerformerImplTest {
     private val mockRequestListener: RequestListener = mockk(relaxed = true)
 
     @BeforeEach
-    fun setup(){
+    fun setup() {
         requestPerformer = RequestPerformerImpl(mockSchema)
     }
 
@@ -59,6 +60,6 @@ internal class RequestPerformerImplTest {
 
     private companion object {
         val graphQLRequest: GraphQLRequest = GraphQLRequest("foo", "bar", emptyMap(), null)
-        const val context = 42
+        val context = GraphQLContext.of(mapOf("userID" to 42))
     }
 }

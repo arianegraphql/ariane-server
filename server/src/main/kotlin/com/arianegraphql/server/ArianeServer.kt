@@ -6,6 +6,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface ArianeServer {
 
+    fun initializeServer()
+
     suspend fun handleHttpRequest(httpRequest: HttpRequest, onResponse: suspend (HttpResponse) -> Unit)
 
     suspend fun handleWebSocketMessage(wsRequest: WebSocketRequest): Flow<String>

@@ -29,11 +29,11 @@ open class ArianeServerBuilder : RuntimeWiringBuilder() {
         override suspend fun resolveContext(request: IncomingRequest): GraphQLContext = GraphQLContext.of(emptyMap<Any, Any>())
     }
 
-    fun <R : Any> context(contextResolver: ContextResolver) {
+    fun context(contextResolver: ContextResolver) {
         this.contextResolver = contextResolver
     }
 
-    fun <R : Any> context(contextResolver: suspend (request: IncomingRequest) -> GraphQLContext) {
+    fun context(contextResolver: suspend (request: IncomingRequest) -> GraphQLContext) {
         this.contextResolver = FunctionalContextResolver(contextResolver)
     }
 

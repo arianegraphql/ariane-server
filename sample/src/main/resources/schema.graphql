@@ -12,6 +12,8 @@ type ResultObject {
     productType: ProductType
 }
 
+scalar Date
+
 enum ProductType {
     PRODUCT_A,
     PRODUCT_B,
@@ -19,11 +21,38 @@ enum ProductType {
 }
 
 type Mutation {
-    mutationWithUser(
-    userId: String!,
-    userName: String,
-    userBirthday: String,
-    userProduct: ProductType!): ResultObject!
+    mutationWithEnum(input: ProductType!): ProductType!
+
+    mutationWithEnumArray(input: [ProductType!]!): [ProductType!]!
+
+    mutationWithNullableEnum(input: ProductType): ProductType
+
+    mutationWithEnumArrayTest(input: [[ProductType]]!): [ProductType!]!
+
+
+
+
+    mutationWithInputObject(input: UserObjectInput!): ResultObject!
+
+    mutationWithInputObjectArray(input: [UserObjectInput!]!): [ResultObject!]!
+
+    mutationWithNullableInputObject(input: UserObjectInput): ResultObject
+
+
+
+
+    mutationWithValues(string: String!, int: Int!, float: Float!, boolean: Boolean!): ResultObject!
+
+    mutationWithNullableValues(string: String, int: Int, float: Float, boolean: Boolean): ResultObject
+
+
+
+
+    mutationWithScalar(input: Date!): ResultObject!
+
+    mutationWithScalarArray(input: [Date!]!): [ResultObject!]!
+
+    mutationWithNullableScalar(input: Date): ResultObject
 }
 
 type Query {

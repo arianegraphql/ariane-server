@@ -1,23 +1,34 @@
 package com.arianegraphql.ktx
 
+import graphql.schema.DataFetcher
 import graphql.schema.idl.TypeRuntimeWiring
 
 @GraphQLSchemaDslMarker
 open class TypeResolverBuilder<S> {
 
-    internal val typeResolver = mutableMapOf<String, Resolver<*>>()
+    val typeResolvers = mutableMapOf<String, DataFetcher<*>>()
 
-    fun resolve(field: String, resolver: Resolver<S>) {
-        typeResolver[field] = resolver
+    @JvmName("resolveWithType")
+    inline fun <reified A> resolve(field: String, resolver: Resolver<S, A>) {
+        typeResolvers[field] = resolver.toDataFetcher()
     }
 
-    fun resolve(field: String, resolver: suspend ResolverParameters<S>.() -> Any?) {
-        typeResolver[field] = FunctionalResolver(resolver)
+    @JvmName("resolveWithType")
+    inline fun <reified A> resolve(field: String, noinline resolver: suspend ResolverParameters<S>.(A) -> Any?) {
+        typeResolvers[field] = FunctionalResolver(resolver).toDataFetcher()
     }
 
-    internal fun build(name: String): TypeRuntimeWiring.Builder = TypeRuntimeWiring.newTypeWiring(name).let {
-        typeResolver.forEach { (name, resolver) ->
-            it.dataFetcher(name, resolver.toDataFetcher())
+    fun resolve(field: String, resolver: Resolver<S, Map<String, Any?>>) {
+        typeResolvers[field] = resolver.toDataFetcher()
+    }
+
+    fun resolve(field: String, resolver: suspend ResolverParameters<S>.(Map<String, Any?>) -> Any?) {
+        typeResolvers[field] = FunctionalResolver(resolver).toDataFetcher()
+    }
+
+    fun build(name: String): TypeRuntimeWiring.Builder = TypeRuntimeWiring.newTypeWiring(name).let {
+        typeResolvers.forEach { (name, dataFetcher) ->
+            it.dataFetcher(name, dataFetcher)
         }
         it
     }

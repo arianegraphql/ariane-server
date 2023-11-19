@@ -1,9 +1,9 @@
 package com.arianegraphql.server
 
+import com.arianegraphql.ktx.argumentTypeResolver
 import com.arianegraphql.ktx.toGraphQLResponse
 import com.arianegraphql.server.async.*
 import com.arianegraphql.server.context.ContextResolver
-import com.arianegraphql.server.extensions.toGraphQLResponse
 import com.arianegraphql.server.graphql.*
 import com.arianegraphql.server.json.JsonSerializer
 import com.arianegraphql.server.listener.RequestListener
@@ -12,20 +12,35 @@ import com.arianegraphql.server.playground.*
 import com.arianegraphql.server.request.*
 import com.arianegraphql.server.response.HttpResponse
 import graphql.GraphQL
+import graphql.GraphQLContext
+import graphql.schema.Coercing
 import kotlinx.coroutines.flow.*
 
 class ArianeServerImpl(
     private val schema: GraphQL,
+    private val scalarTypes: Map<Class<*>, Coercing<*, *>>,
     private val isPlaygroundEnabled: Boolean,
     private val contextResolver: ContextResolver,
     private val requestListener: RequestListener?,
     private val subscriptionListener: SubscriptionListener?,
-    jsonSerializer: JsonSerializer,
+    private val jsonSerializer: JsonSerializer,
     playgroundRenderer: PlaygroundRenderer = PlaygroundRendererImpl(),
     requestPerformer: RequestPerformer = RequestPerformerImpl(schema),
-    subscriptionHandler: SubscriptionHandler = SubscriptionHandlerImpl(jsonSerializer, requestPerformer, requestListener, subscriptionListener)
-) : ArianeServer, PlaygroundRenderer by playgroundRenderer, JsonSerializer by jsonSerializer, RequestPerformer by requestPerformer,
+    subscriptionHandler: SubscriptionHandler = SubscriptionHandlerImpl(
+        jsonSerializer,
+        requestPerformer,
+        requestListener,
+        subscriptionListener
+    )
+) : ArianeServer, PlaygroundRenderer by playgroundRenderer, JsonSerializer by jsonSerializer,
+    RequestPerformer by requestPerformer,
     SubscriptionHandler by subscriptionHandler {
+
+    override fun initializeServer() {
+        scalarTypes.forEach {
+            jsonSerializer.registerResolverType(it.key, it.value)
+        }
+    }
 
     override suspend fun handleHttpRequest(httpRequest: HttpRequest, onResponse: suspend (HttpResponse) -> Unit) {
         requestListener?.onReceived(httpRequest)
@@ -38,7 +53,13 @@ class ArianeServerImpl(
 
         requestListener?.onParsed(graphQLRequest)
 
-        val response = performRequest(graphQLRequest, contextResolver.resolveContext(httpRequest), requestListener)
+        val ctx = GraphQLContext
+            .newContext()
+            .of(contextResolver.resolveContext(httpRequest))
+            .argumentTypeResolver(jsonSerializer)
+            .build()
+
+        val response = performRequest(graphQLRequest, ctx, requestListener)
             .map { executionResult ->
                 val response = executionResult.toGraphQLResponse()
                 requestListener?.onExecuted(response)

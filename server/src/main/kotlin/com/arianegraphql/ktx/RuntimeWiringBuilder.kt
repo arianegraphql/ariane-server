@@ -4,20 +4,24 @@ import graphql.schema.Coercing
 import graphql.schema.GraphQLScalarType
 import graphql.schema.idl.RuntimeWiring
 import graphql.schema.idl.RuntimeWiring.newRuntimeWiring
+import graphql.schema.idl.TypeRuntimeWiring
 
 @GraphQLSchemaDslMarker
-open class RuntimeWiringBuilder: EnumProviderBuilder() {
-    private val runtimeWiringBuilder: RuntimeWiring.Builder = newRuntimeWiring()
+open class RuntimeWiringBuilder {
+    val runtimeWiringBuilder: RuntimeWiring.Builder = newRuntimeWiring()
+    val registeredScalarTypes: MutableMap<Class<*>, Coercing<*, *>> = mutableMapOf()
 
-    fun resolvers(builder: RootResolverBuilder.() -> Unit) = RootResolverBuilder().apply(builder).build().forEach {
-        runtimeWiringBuilder.type(it)
-    }
+    fun resolvers(builder: RootResolverBuilder.() -> Unit) =
+        addResolvers(RootResolverBuilder().apply(builder).build())
 
-    fun scalar(scalar: GraphQLScalarType) {
+    fun addResolvers(resolvers: List<TypeRuntimeWiring.Builder>) = resolvers.forEach(runtimeWiringBuilder::type)
+
+    inline fun <reified T> scalar(scalar: GraphQLScalarType) {
         runtimeWiringBuilder.scalar(scalar)
+        registeredScalarTypes[T::class.java] = scalar.coercing
     }
 
-    fun <I, O> scalar(name: String, description: String = "", coercing: Coercing<I, O>) = scalar(
+    inline fun <reified I, O> scalar(name: String, description: String = "", coercing: Coercing<I, O>) = scalar<I>(
         GraphQLScalarType
             .newScalar()
             .name(name)
@@ -26,13 +30,6 @@ open class RuntimeWiringBuilder: EnumProviderBuilder() {
             .build()
     )
 
-    fun <I, O> scalar(name: String, builder: ScalarBuilder<I?, O?>.() -> Unit) =
-        scalar(ScalarBuilder<I?, O?>().apply(builder).build(name))
-
-    fun build(): RuntimeWiring {
-        enumProviders.values.forEach {
-            runtimeWiringBuilder.type(it)
-        }
-        return runtimeWiringBuilder.build()
-    }
+    inline fun <reified I, O> scalar(name: String, builder: ScalarBuilder<I?, O?>.() -> Unit) =
+        scalar<I>(ScalarBuilder<I?, O?>().apply(builder).build(name))
 }

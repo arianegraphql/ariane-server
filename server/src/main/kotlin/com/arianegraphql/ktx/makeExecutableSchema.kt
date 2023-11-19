@@ -13,7 +13,7 @@ fun makeExecutableSchema(schema: String, runtimeWiring: RuntimeWiring): GraphQLS
     makeExecutableSchema(SchemaParser().parse(schema), runtimeWiring)
 
 fun makeExecutableSchema(typeRegistry: TypeDefinitionRegistry, builder: RuntimeWiringBuilder.() -> Unit): GraphQLSchema =
-    SchemaGenerator().makeExecutableSchema(typeRegistry, RuntimeWiringBuilder().apply(builder).build())
+    SchemaGenerator().makeExecutableSchema(typeRegistry, RuntimeWiringBuilder().apply(builder).runtimeWiringBuilder.build())
 
 fun makeExecutableSchema(schema: String, builder: RuntimeWiringBuilder.() -> Unit): GraphQLSchema =
-    makeExecutableSchema(SchemaParser().parse(schema), RuntimeWiringBuilder().apply(builder).build())
+    makeExecutableSchema(SchemaParser().parse(schema), RuntimeWiringBuilder().apply(builder).runtimeWiringBuilder.build())
