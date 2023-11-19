@@ -2,8 +2,8 @@ package com.arianegraphql.codegen.generator
 
 import com.arianegraphql.codegen.CodegenContext
 import com.arianegraphql.codegen.ktx.kotlinType
-import com.arianegraphql.ktx.RootResolverBuilder
-import com.arianegraphql.ktx.TypeResolverBuilder
+import com.arianegraphql.dsl.RootResolverBuilder
+import com.arianegraphql.dsl.TypeResolverBuilder
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import graphql.language.*

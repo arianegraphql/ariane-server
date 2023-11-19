@@ -1,4 +1,4 @@
-package com.arianegraphql.server.ktor.json
+package com.arianegraphql.server.json
 
 import com.arianegraphql.server.graphql.GraphQLRequest
 import com.arianegraphql.server.graphql.GraphQLResponse
@@ -37,9 +37,9 @@ object JacksonSerializer : JsonSerializer {
     }
 
     override fun <T> resolve(type: Class<T>, value: Map<String, Any>, graphQLContext: GraphQLContext): T {
-        this.graphQLContext = graphQLContext
+        JacksonSerializer.graphQLContext = graphQLContext
         val output = jacksonScalar.convertValue(value, type)
-        this.graphQLContext = null
+        JacksonSerializer.graphQLContext = null
         return output
     }
 

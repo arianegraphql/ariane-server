@@ -1,4 +1,4 @@
-package com.arianegraphql.server.ktor.dsl
+package com.arianegraphql.dsl
 
 import io.ktor.server.application.Application
 

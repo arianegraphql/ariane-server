@@ -1,4 +1,4 @@
-package com.arianegraphql.server.ktor.dsl
+package com.arianegraphql.dsl
 
 import com.arianegraphql.server.config.ArianeServerConfiguration
 import com.arianegraphql.server.context.ContextResolver

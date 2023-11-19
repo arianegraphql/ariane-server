@@ -1,4 +1,4 @@
-package com.arianegraphql.ktx
+package com.arianegraphql.dsl
 
 import java.io.FileNotFoundException
 

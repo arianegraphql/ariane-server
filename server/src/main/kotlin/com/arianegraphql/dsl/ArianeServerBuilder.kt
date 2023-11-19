@@ -1,7 +1,5 @@
-package com.arianegraphql.server.dsl
+package com.arianegraphql.dsl
 
-import com.arianegraphql.ktx.GraphQLSchemaDslMarker
-import com.arianegraphql.ktx.RuntimeWiringBuilder
 import com.arianegraphql.server.context.ContextResolver
 import com.arianegraphql.server.context.FunctionalContextResolver
 import com.arianegraphql.server.listener.RequestListener

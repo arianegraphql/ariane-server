@@ -1,3 +1,6 @@
+group = project.rootProject.group
+version = project.rootProject.version
+
 plugins {
     id("java-gradle-plugin")
     id("maven-publish")

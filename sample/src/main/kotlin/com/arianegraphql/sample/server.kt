@@ -1,8 +1,8 @@
 package com.arianegraphql.sample
 
-import com.arianegraphql.ktx.loadSchema
+import com.arianegraphql.dsl.loadSchema
 import com.arianegraphql.sample.model.*
-import com.arianegraphql.server.ktor.dsl.arianeServer
+import com.arianegraphql.dsl.arianeServer
 import com.arianegraphql.server.listener.ServerListener
 import com.example.resolver.*
 import graphql.language.StringValue

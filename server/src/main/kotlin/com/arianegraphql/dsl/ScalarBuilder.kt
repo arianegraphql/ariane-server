@@ -1,4 +1,4 @@
-package com.arianegraphql.ktx
+package com.arianegraphql.dsl
 
 import graphql.GraphQLContext
 import graphql.execution.CoercedVariables

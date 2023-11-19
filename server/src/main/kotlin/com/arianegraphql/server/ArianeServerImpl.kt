@@ -1,7 +1,7 @@
 package com.arianegraphql.server
 
-import com.arianegraphql.ktx.argumentTypeResolver
-import com.arianegraphql.ktx.toGraphQLResponse
+import com.arianegraphql.dsl.argumentTypeResolver
+import com.arianegraphql.dsl.toGraphQLResponse
 import com.arianegraphql.server.async.*
 import com.arianegraphql.server.context.ContextResolver
 import com.arianegraphql.server.graphql.*

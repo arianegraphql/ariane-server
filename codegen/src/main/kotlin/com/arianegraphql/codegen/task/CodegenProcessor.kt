@@ -4,13 +4,12 @@ import com.arianegraphql.codegen.CodegenContext
 import com.arianegraphql.codegen.CodegenTask
 import com.arianegraphql.codegen.generator.generateAllResolvers
 import com.arianegraphql.codegen.generator.generateFile
-import com.arianegraphql.ktx.GraphQLTypes
+import com.arianegraphql.dsl.GraphQLTypes
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.asClassName
 import graphql.language.EnumTypeDefinition
 import graphql.language.InputObjectTypeDefinition
 import graphql.language.ObjectTypeDefinition
-import graphql.schema.idl.TypeDefinitionRegistry
 
 context(CodegenContext)
 fun CodegenTask.generateCode(): Result<Unit> = runCatching {

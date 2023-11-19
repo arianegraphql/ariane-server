@@ -1,10 +1,10 @@
 package com.arianegraphql.server.ktor
 
 import com.arianegraphql.server.config.newArianeServer
-import com.arianegraphql.server.dsl.ArianeServerBuilder
-import com.arianegraphql.server.ktor.dsl.ArianeKtorServerConfiguration
-import com.arianegraphql.server.ktor.dsl.arianeServer
-import com.arianegraphql.server.ktor.json.JacksonSerializer
+import com.arianegraphql.dsl.ArianeServerBuilder
+import com.arianegraphql.dsl.ArianeKtorServerConfiguration
+import com.arianegraphql.dsl.arianeServer
+import com.arianegraphql.server.json.JacksonSerializer
 import io.ktor.server.cio.*
 import io.ktor.server.engine.*
 import io.ktor.server.application.*

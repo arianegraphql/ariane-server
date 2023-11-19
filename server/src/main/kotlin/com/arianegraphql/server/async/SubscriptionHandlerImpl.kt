@@ -1,8 +1,8 @@
 package com.arianegraphql.server.async
 
-import com.arianegraphql.ktx.argumentTypeResolver
+import com.arianegraphql.dsl.argumentTypeResolver
 import com.arianegraphql.server.context.ContextResolver
-import com.arianegraphql.ktx.toWebSocketPayload
+import com.arianegraphql.dsl.toWebSocketPayload
 import com.arianegraphql.server.graphql.RequestPerformer
 import com.arianegraphql.server.json.JsonSerializer
 import com.arianegraphql.server.listener.RequestListener
