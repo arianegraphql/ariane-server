@@ -82,6 +82,6 @@ jobs:
         env:
           GRADLE_PROPERTIES: ${{secrets.GRADLE_PROPERTIES}}
         shell: bash
-        run: 'echo "$GRADLE_PROPERTIES" > gradle.properties && sed -i "s/SONATYPE_USERNAME/foobar/g" gradle.properties && cat gradle.properties'
+        run: 'echo "$GRADLE_PROPERTIES" > gradle.properties && sed -i "s/GPG_SECRET/foobar/g" gradle.properties && sed -i "s/GPG_PASSPHRASE/foobar/g" gradle.properties && sed -i "s/SONATYPE_PASSWORD/foobar/g" gradle.properties && sed -i "s/SONATYPE_USERNAME/foobar/g" gradle.properties && cat gradle.properties'
       - name: Deploy codegen plugin
         run: cd server/ && ../gradlew :codegen:publishPluginMavenPublicationToSonatypeRepository
