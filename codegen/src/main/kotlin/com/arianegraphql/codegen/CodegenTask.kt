@@ -24,8 +24,8 @@ abstract class CodegenTask : DefaultTask() {
     @TaskAction
     fun run() {
         outputDir.orNull?.asFile?.clear()
-        println("[MELVIN] Schema = ${schema.orNull?.asFile?.absolutePath}")
-        println("[MELVIN] Config = ${configuration.orNull?.asFile?.absolutePath}")
+        logger.info("[ARIANE] Schema = ${schema.orNull?.asFile?.absolutePath}")
+        logger.info("[ARIANE] Config = ${configuration.orNull?.asFile?.absolutePath}")
 
         val context = prepare().getOrElse {
             logger.error(it.message)
