@@ -33,3 +33,6 @@ open class RuntimeWiringBuilder {
     inline fun <reified I, O> scalar(name: String, builder: ScalarBuilder<I?, O?>.() -> Unit) =
         scalar<I>(ScalarBuilder<I?, O?>().apply(builder).build(name))
 }
+
+fun resolvers(builder: RootResolverBuilder.() -> Unit): List<TypeRuntimeWiring.Builder> =
+    RootResolverBuilder().apply(builder).build()

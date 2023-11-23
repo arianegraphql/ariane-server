@@ -17,7 +17,7 @@ dependencies {
 }
 
 gradlePlugin {
-    website.set("https://arianegraphql.com/")
+    website.set("https://arianegraphql.com/docs/codegen")
     vcsUrl.set("https://github.com/arianegraphql/ariane-server")
 
     plugins {

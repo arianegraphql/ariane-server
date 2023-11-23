@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.arianegraphql"
-version = "0.3.0-beta01"
+version = "0.3.0"
 
 subprojects {
     tasks.withType<KotlinCompile> {
