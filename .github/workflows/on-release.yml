@@ -1,5 +1,7 @@
 name: ArianeServer CI
-on: [release]
+on:
+  release:
+    types: [published]
 
 jobs:
   build:
@@ -46,7 +48,7 @@ jobs:
         shell: bash
         run: 'echo "$GRADLE_PROPERTIES" > gradle.properties'
       - name: Deploy server library
-        run: cd server/ && ../gradlew :server:publishToSonatype
+        run: cd server/ && ../gradlew :server:publishToSonatype :server:closeAndReleaseStagingRepository
 
   deploy-server-ktor:
     needs: deploy-server
@@ -65,7 +67,7 @@ jobs:
         shell: bash
         run: 'echo "$GRADLE_PROPERTIES" > gradle.properties'
       - name: Deploy Server Ktor library
-        run: cd server-ktor/ && ../gradlew :server-ktor:publishToSonatype
+        run: cd server-ktor/ && ../gradlew :server-ktor:publishToSonatype :server-ktor:closeAndReleaseStagingRepository
 
   deploy-codegen-plugin:
     needs: test
