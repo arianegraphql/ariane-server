@@ -62,6 +62,22 @@ fun FieldDefinition.generateResolverInterface(parent: ClassName, argument: Class
     val superType = Resolver::class.asTypeName().parameterizedBy(parent, argument)
 
     fileSpecBuilder.addType(TypeSpec.interfaceBuilder(interfaceName).addSuperinterface(superType).build())
+
+    val functionReceiver = TypeResolverBuilder::class.asClassName()
+        .parameterizedBy(parent)
+        .copy(annotations = emptyList())
+
+    val function = FunSpec.builder(name)
+        .receiver(functionReceiver)
+        .addParameter(
+            ParameterSpec.builder(
+            RESOLVER_PARAMETER_NAME, ClassName(fileSpecBuilder.packageName, interfaceName)
+        ).build())
+        .addCode("resolve(%S, $RESOLVER_PARAMETER_NAME)", name)
+        .build()
+
+
+    fileSpecBuilder.addFunction(function)
 }
 
 private const val RESOLVER_PARAMETER_NAME = "resolver"
