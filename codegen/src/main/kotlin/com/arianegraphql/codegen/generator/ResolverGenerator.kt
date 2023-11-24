@@ -57,7 +57,7 @@ private fun functionalResolverLambdaParameter(className: ClassName, argumentType
 }
 
 fun FieldDefinition.generateResolverInterface(parent: ClassName, argument: ClassName, fileSpecBuilder: FileSpec.Builder) {
-    val interfaceName = name.replaceFirstChar { it.toUpperCase() } + "Resolver"
+    val interfaceName = "${parent.simpleName}${name.replaceFirstChar { it.uppercase() }}Resolver"
 
     val superType = Resolver::class.asTypeName().parameterizedBy(parent, argument)
 
