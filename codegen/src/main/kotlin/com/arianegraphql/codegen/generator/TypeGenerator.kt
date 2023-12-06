@@ -14,7 +14,7 @@ fun ObjectTypeDefinition.generateFile(): FileSpec {
         .addParameters(fieldDefinitions.map { it.asNullableParameter })
         .build()
 
-    val classSpec = TypeSpec.classBuilder(name).apply {
+    val classSpec = TypeSpec.classBuilder("$typePrefix$name$typeSuffix").apply {
         if (fieldDefinitions.isNotEmpty()) {
             addModifiers(KModifier.DATA)
         }
@@ -35,7 +35,7 @@ fun InputObjectTypeDefinition.generateFile(): FileSpec {
         .addParameters(inputValueDefinitions.map { it.asParameter })
         .build()
 
-    val classSpec = TypeSpec.classBuilder(name).apply {
+    val classSpec = TypeSpec.classBuilder("$typePrefix$name$typeSuffix").apply {
         if (inputValueDefinitions.isNotEmpty()) {
             addModifiers(KModifier.DATA)
         }
@@ -81,7 +81,7 @@ fun ObjectTypeDefinition.generateRootResolver(): FunSpec {
         annotations = emptyList()
     )
 
-    val className = ClassName(packageNameTypes, name)
+    val className = ClassName(packageNameTypes, "$typePrefix$name$typeSuffix")
 
     return FunSpec.builder(name)
         .receiver(functionReceiver)

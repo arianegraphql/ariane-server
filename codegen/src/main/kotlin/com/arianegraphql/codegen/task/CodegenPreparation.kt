@@ -29,6 +29,8 @@ fun CodegenTask.prepare(): Result<CodegenContext> {
             graphQLSchema = graphQLSchema,
             buildDir = outputDir.get().asFile,
             packageName = options.packageName ?: CodegenContext.DefaultPackageName,
+            typeSuffix = options.typeSuffix ?: "",
+            typePrefix = options.typePrefix ?: "",
         )
     )
 }

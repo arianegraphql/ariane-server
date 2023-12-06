@@ -10,7 +10,6 @@ import com.squareup.kotlinpoet.asClassName
 import graphql.language.EnumTypeDefinition
 import graphql.language.InputObjectTypeDefinition
 import graphql.language.ObjectTypeDefinition
-import graphql.schema.idl.TypeDefinitionRegistry
 
 context(CodegenContext)
 fun CodegenTask.generateCode(): Result<Unit> = runCatching {
@@ -45,7 +44,7 @@ context(CodegenContext)
 private fun processType(typeDef: ObjectTypeDefinition) {
     typeDef.generateFile().write()
 
-    val typeClass = ClassName(packageNameTypes, typeDef.name)
+    val typeClass = ClassName(packageNameTypes,"$typePrefix${typeDef.name}$typeSuffix")
     typeDef.generateAllResolvers(typeClass).write()
 }
 
