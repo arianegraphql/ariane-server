@@ -10,13 +10,15 @@ class SubscriptionTypeResolverBuilder : TypeResolverBuilder<GraphQLTypes.Subscri
 
     inline fun <T : Any, reified A> resolve(field: String, flow: Flow<T>) = resolve<T, A>(field, flow.asPublisher())
 
-    inline fun <T, reified A> resolve(field: String, publisher: Publisher<T>) = resolve<A>(field) { publisher }
+    inline fun <T, reified A> resolve(field: String, publisher: Publisher<T>) = resolve<A, Publisher<T>>(field) {
+        publisher
+    }
 
     inline fun <T : Any, reified A> resolve(
         field: String,
         flow: Flow<T>,
         predicate: SubscriptionFilter<T, GraphQLTypes.Subscription, A>
-    ) = resolve<A>(field) { arguments ->
+    ) = resolve<A, Publisher<T>>(field) { arguments ->
         flow.filter { item ->
             predicate.test(arguments, source, context, info, item)
         }.asPublisher()

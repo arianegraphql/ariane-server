@@ -9,20 +9,12 @@ open class TypeResolverBuilder<S> {
     val typeResolvers = mutableMapOf<String, DataFetcher<*>>()
 
     @JvmName("resolveWithType")
-    inline fun <reified A> resolve(field: String, resolver: Resolver<S, A>) {
+    inline fun <reified A, R: Any?> resolve(field: String, resolver: Resolver<S, A, R>) {
         typeResolvers[field] = resolver.toDataFetcher()
     }
 
     @JvmName("resolveWithType")
-    inline fun <reified A> resolve(field: String, noinline resolver: suspend ResolverParameters<S>.(A) -> Any?) {
-        typeResolvers[field] = FunctionalResolver(resolver).toDataFetcher()
-    }
-
-    fun resolve(field: String, resolver: Resolver<S, Map<String, Any?>>) {
-        typeResolvers[field] = resolver.toDataFetcher()
-    }
-
-    fun resolve(field: String, resolver: suspend ResolverParameters<S>.(Map<String, Any?>) -> Any?) {
+    inline fun <reified A, R: Any?> resolve(field: String, noinline resolver: suspend ResolverParameters<S>.(A) -> R) {
         typeResolvers[field] = FunctionalResolver(resolver).toDataFetcher()
     }
 
