@@ -6,7 +6,7 @@ import graphql.language.EnumTypeDefinition
 
 context(CodegenContext)
 fun EnumTypeDefinition.generateFile(): FileSpec {
-    val builder = TypeSpec.enumBuilder(name)
+    val builder = TypeSpec.enumBuilder("$typePrefix$name$typeSuffix")
     enumValueDefinitions.forEach {
         builder.addEnumConstant(it.name)
     }

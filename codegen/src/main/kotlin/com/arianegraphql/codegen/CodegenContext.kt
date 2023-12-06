@@ -11,6 +11,8 @@ data class CodegenContext(
     val graphQLSchema: TypeDefinitionRegistry,
     val buildDir: File,
     val packageName: String,
+    val typeSuffix: String,
+    val typePrefix: String,
 ) {
 
     val packageNameTypes: String

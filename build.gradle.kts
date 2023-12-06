@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "com.arianegraphql"
-version = "0.3.2"
+version = "0.3.3"
 
 subprojects {
     tasks.withType<KotlinCompile> {
@@ -85,7 +85,7 @@ subprojects {
         }
         signing {
             val signingPassword = project.property("GPG_PASSPHRASE") as String?
-            val signingKey= project.property("GPG_SECRET") as String?
+            val signingKey = project.property("GPG_SECRET") as String?
 
             useInMemoryPgpKeys(signingKey, signingPassword)
             sign(publishing.publications)

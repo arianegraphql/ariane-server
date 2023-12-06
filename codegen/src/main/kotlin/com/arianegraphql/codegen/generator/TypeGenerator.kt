@@ -11,16 +11,16 @@ import graphql.language.*
 context(CodegenContext)
 fun ObjectTypeDefinition.generateFile(): FileSpec {
     val constructor = FunSpec.constructorBuilder()
-        .addParameters(fieldDefinitions.map { it.asParameter })
+        .addParameters(fieldDefinitions.map { it.asNullableParameter })
         .build()
 
-    val classSpec = TypeSpec.classBuilder(name).apply {
+    val classSpec = TypeSpec.classBuilder("$typePrefix$name$typeSuffix").apply {
         if (fieldDefinitions.isNotEmpty()) {
             addModifiers(KModifier.DATA)
         }
     }
         .primaryConstructor(constructor)
-        .addProperties(fieldDefinitions.map { it.asProperty })
+        .addProperties(fieldDefinitions.map { it.asNullableProperty })
         .build()
 
     return FileSpec.builder(packageNameTypes, name)
@@ -35,7 +35,7 @@ fun InputObjectTypeDefinition.generateFile(): FileSpec {
         .addParameters(inputValueDefinitions.map { it.asParameter })
         .build()
 
-    val classSpec = TypeSpec.classBuilder(name).apply {
+    val classSpec = TypeSpec.classBuilder("$typePrefix$name$typeSuffix").apply {
         if (inputValueDefinitions.isNotEmpty()) {
             addModifiers(KModifier.DATA)
         }
@@ -50,14 +50,15 @@ fun InputObjectTypeDefinition.generateFile(): FileSpec {
 }
 
 context(CodegenContext)
-val FieldDefinition.asParameter: ParameterSpec
-    get() = ParameterSpec.builder(this.name, type.kotlinType)
+val FieldDefinition.asNullableParameter: ParameterSpec
+    get() = ParameterSpec.builder(this.name, type.kotlinType.copy(nullable = true))
+        .defaultValue("null")
         .build()
 
 context(CodegenContext)
-val FieldDefinition.asProperty: PropertySpec
+val FieldDefinition.asNullableProperty: PropertySpec
     get() = PropertySpec
-        .builder(name, type.kotlinType)
+        .builder(name, type.kotlinType.copy(nullable = true))
         .initializer(name)
         .build()
 
@@ -80,7 +81,7 @@ fun ObjectTypeDefinition.generateRootResolver(): FunSpec {
         annotations = emptyList()
     )
 
-    val className = ClassName(packageNameTypes, name)
+    val className = ClassName(packageNameTypes, "$typePrefix$name$typeSuffix")
 
     return FunSpec.builder(name)
         .receiver(functionReceiver)
