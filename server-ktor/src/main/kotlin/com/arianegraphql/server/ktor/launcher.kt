@@ -21,9 +21,7 @@ fun ArianeKtorServerConfiguration.launch(wait: Boolean = true) {
     embeddedServer(CIO, port, host) {
         install(WebSockets)
 
-        if (enableCORS) {
-            install(CORS)
-        }
+        corsConfig?.let { install(CORS, it) }
 
         serverListener?.let { listener ->
             environment.monitor.subscribe(ApplicationStarted) {

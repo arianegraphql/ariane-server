@@ -7,6 +7,8 @@ import com.arianegraphql.server.listener.ServerListener
 import com.arianegraphql.server.listener.SubscriptionListener
 import graphql.GraphQL
 import graphql.schema.Coercing
+import io.ktor.server.application.*
+import io.ktor.server.plugins.cors.*
 
 class ArianeKtorServerConfiguration(
     schema: GraphQL,
@@ -15,7 +17,7 @@ class ArianeKtorServerConfiguration(
     port: Int,
     path: String,
     isPlaygroundEnabled: Boolean,
-    enableCORS: Boolean,
+    val corsConfig: (CORSConfig.() -> Unit)?,
     contextResolver: ContextResolver,
     serverListener: ServerListener?,
     requestListener: RequestListener?,
@@ -28,7 +30,7 @@ class ArianeKtorServerConfiguration(
     port,
     path,
     isPlaygroundEnabled,
-    enableCORS,
+    corsConfig != null,
     contextResolver,
     serverListener,
     requestListener,
