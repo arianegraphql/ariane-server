@@ -6,11 +6,13 @@ import com.arianegraphql.server.dsl.ArianeServerBuilder
 import graphql.GraphQL
 import java.lang.IllegalStateException
 import io.ktor.server.application.Application
+import io.ktor.server.plugins.cors.*
 
 @GraphQLSchemaDslMarker
 class ArianeKtorServerBuilder : ArianeServerBuilder() {
 
     var ktorPlugin: KtorPlugin? = null
+    var cors: (CORSConfig.() -> Unit)? = null
 
     fun ktorPlugin(receiver: Application.() -> Unit) {
         this.ktorPlugin = FunctionalKtorPlugin(receiver)
@@ -33,7 +35,7 @@ fun arianeServer(builder: ArianeKtorServerBuilder.() -> Unit): ArianeKtorServerC
         config.port,
         config.path,
         config.enablePlayground,
-        config.enableCORS,
+        config.cors,
         config.contextResolver,
         config.serverListener,
         config.requestListener,

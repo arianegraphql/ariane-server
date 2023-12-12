@@ -53,7 +53,7 @@ private fun functionalResolverLambdaParameter(className: ClassName, argumentType
         LambdaTypeName.get(
             receiver = receiver,
             parameters = listOf(argumentParam),
-            returnType = returnType.copy(nullable = true),
+            returnType = returnType,
         ).copy(suspending = true),
     ).build()
 }
@@ -61,7 +61,7 @@ private fun functionalResolverLambdaParameter(className: ClassName, argumentType
 fun FieldDefinition.generateResolverInterface(parent: ClassName, argument: ClassName, returnType: TypeName, fileSpecBuilder: FileSpec.Builder) {
     val interfaceName = "${parent.simpleName}${name.replaceFirstChar { it.uppercase() }}Resolver"
 
-    val interfaceSuperType = Resolver::class.asTypeName().parameterizedBy(parent, argument, returnType.copy(nullable = true))
+    val interfaceSuperType = Resolver::class.asTypeName().parameterizedBy(parent, argument, returnType)
 
     fileSpecBuilder.addType(TypeSpec.interfaceBuilder(interfaceName).addSuperinterface(interfaceSuperType).build())
 

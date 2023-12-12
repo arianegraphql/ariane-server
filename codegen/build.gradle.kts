@@ -8,12 +8,12 @@ plugins {
 }
 
 dependencies {
-    implementation("com.squareup:kotlinpoet:1.14.2")
+    implementation("com.squareup:kotlinpoet:1.15.3")
 
-    implementation("com.graphql-java:graphql-java:21.1")
+    implementation("com.graphql-java:graphql-java:21.3")
     implementation(project(":server"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
 }
 
 gradlePlugin {

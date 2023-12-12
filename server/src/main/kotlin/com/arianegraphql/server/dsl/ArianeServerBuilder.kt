@@ -19,7 +19,6 @@ open class ArianeServerBuilder : RuntimeWiringBuilder() {
     var schema: String? = null
 
     var enablePlayground = true
-    var enableCORS = true
 
     var serverListener: ServerListener? = null
     var requestListener: RequestListener? = null

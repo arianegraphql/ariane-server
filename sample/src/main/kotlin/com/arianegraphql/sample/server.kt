@@ -12,6 +12,10 @@ val myServer = arianeServer {
     schema = loadSchema("schema.graphql")
     port = 3000
 
+    cors = {
+        anyHost()
+    }
+
     serverListener = object : ServerListener {
 
         override fun onStart(host: String, port: Int, path: String) {
