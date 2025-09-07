@@ -1,5 +1,7 @@
-package com.arianegraphql.ktx
+package com.arianegraphql.server.resolver
 
+import com.arianegraphql.ktx.Info
+import com.arianegraphql.ktx.argumentTypeResolver
 import graphql.GraphQLContext
 import graphql.schema.DataFetcher
 import kotlinx.coroutines.runBlocking
@@ -10,7 +12,7 @@ interface Resolver<S, A, R: Any?> {
 
 @JvmInline
 value class FunctionalResolver<S, A, R: Any?>(
-    private val lambda: suspend ResolverParameters<S>.(A) -> R
+    private val lambda: suspend ResolverContext<S>.(A) -> R
 ) : Resolver<S, A, R> {
 
     override suspend fun resolve(
@@ -18,7 +20,7 @@ value class FunctionalResolver<S, A, R: Any?>(
         source: S,
         context: GraphQLContext,
         info: Info
-    ): R = with(ResolverParameters(source, context, info)) {
+    ): R = with(ResolverContext(source, context, info)) {
         return@with lambda(arguments)
     }
 }

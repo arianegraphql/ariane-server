@@ -3,17 +3,17 @@ version = project.rootProject.version
 
 plugins {
     id("java-gradle-plugin")
-    id("com.gradle.plugin-publish") version "1.2.1"
-    kotlin("plugin.serialization") version "1.8.20"
+    alias(libs.plugins.gradle.plugin.publish)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 dependencies {
-    implementation("com.squareup:kotlinpoet:2.2.0")
+    implementation(libs.kotlinpoet)
 
-    implementation("com.graphql-java:graphql-java:25.0.beta-5")
+    implementation(libs.graphql.java)
     implementation(project(":server"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+    implementation(libs.kotlinx.serialization.json)
 }
 
 gradlePlugin {

@@ -1,8 +1,8 @@
 plugins {
-    kotlin("jvm") version "2.2.10"
+    alias(libs.plugins.kotlin.jvm)
     signing
     `maven-publish`
-    id("io.github.gradle-nexus.publish-plugin") version "2.0.0"
+    alias(libs.plugins.nexus.publish)
 }
 
 group = "com.arianegraphql"
@@ -16,7 +16,11 @@ subprojects {
 
     apply(plugin = "kotlin")
     apply(plugin = "maven-publish")
-    apply(plugin = "signing")
+
+    // Skip signing for codegen module as it's a Gradle plugin with different requirements
+    if (name != "codegen") {
+        apply(plugin = "signing")
+    }
 
     dependencies {
         implementation(kotlin("stdlib"))
@@ -26,60 +30,63 @@ subprojects {
         testImplementation("io.github.serpro69:kotlin-faker:2.0.0-rc.11")
     }
 
-    tasks {
-        // published artifacts
-        val jarComponent = this@subprojects.components.getByName("java")
-        val sourcesJar by registering(Jar::class) {
-            archiveClassifier.set("sources")
-            from(sourceSets.main.get().allSource)
-        }
-        val javadocJar by registering(Jar::class) {
-            archiveClassifier.set("javadoc")
-            from("$buildDir/javadoc")
-        }
+    // Skip publication configuration for codegen module as it's a Gradle plugin
+    if (name != "codegen") {
+        tasks {
+            // published artifacts
+            val jarComponent = this@subprojects.components.getByName("java")
+            val sourcesJar by registering(Jar::class) {
+                archiveClassifier.set("sources")
+                from(sourceSets.main.get().allSource)
+            }
+            val javadocJar by registering(Jar::class) {
+                archiveClassifier.set("javadoc")
+                from("$buildDir/javadoc")
+            }
 
-        publishing {
-            publications {
-                withType<MavenPublication> {
-                    pom {
-                        name.set("${this@subprojects.group}:${this@subprojects.name}")
-                        url.set("https://github.com/arianegraphql/ariane-server")
-                        description.set("Lightweight Kotlin GraphQL server")
-                        licenses {
-                            license {
-                                name.set("MIT License")
-                                url.set("https://github.com/arianegraphql/ariane-server/blob/main/LICENSE")
-                            }
-                        }
-                        developers {
-                            developer {
-                                id.set("mbiamont")
-                                name.set("Melvin Biamont")
-                                email.set("melvin@arianegraphql.com")
-                                url.set("https://github.com/mbiamont")
-                            }
-                        }
-                        scm {
-                            connection.set("scm:git:git://github.com/arianegraphql/ariane-server.git")
-                            developerConnection.set("scm:git:git://github.com/arianegraphql/ariane-server.git")
+            publishing {
+                publications {
+                    withType<MavenPublication> {
+                        pom {
+                            name.set("${this@subprojects.group}:${this@subprojects.name}")
                             url.set("https://github.com/arianegraphql/ariane-server")
+                            description.set("Lightweight Kotlin GraphQL server")
+                            licenses {
+                                license {
+                                    name.set("MIT License")
+                                    url.set("https://github.com/arianegraphql/ariane-server/blob/main/LICENSE")
+                                }
+                            }
+                            developers {
+                                developer {
+                                    id.set("mbiamont")
+                                    name.set("Melvin Biamont")
+                                    email.set("melvin@arianegraphql.com")
+                                    url.set("https://github.com/mbiamont")
+                                }
+                            }
+                            scm {
+                                connection.set("scm:git:git://github.com/arianegraphql/ariane-server.git")
+                                developerConnection.set("scm:git:git://github.com/arianegraphql/ariane-server.git")
+                                url.set("https://github.com/arianegraphql/ariane-server")
+                            }
                         }
                     }
-                }
-                create<MavenPublication>("mavenJava") {
-                    from(jarComponent)
-                    // no need to publish sources or javadocs for SNAPSHOT builds
-                    artifact(sourcesJar.get())
-                    artifact(javadocJar.get())
+                    create<MavenPublication>("mavenJava") {
+                        from(jarComponent)
+                        // no need to publish sources or javadocs for SNAPSHOT builds
+                        artifact(sourcesJar.get())
+                        artifact(javadocJar.get())
+                    }
                 }
             }
-        }
-        signing {
-            val signingPassword = project.property("GPG_PASSPHRASE") as String?
-            val signingKey = project.property("GPG_SECRET") as String?
+            signing {
+                val signingPassword = project.property("GPG_PASSPHRASE") as String?
+                val signingKey = project.property("GPG_SECRET") as String?
 
-            useInMemoryPgpKeys(signingKey, signingPassword)
-            sign(publishing.publications["mavenJava"])
+                useInMemoryPgpKeys(signingKey, signingPassword)
+                sign(publishing.publications["mavenJava"])
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.arianegraphql.ktx
 
+import com.arianegraphql.server.resolver.ResolverContext
 import graphql.GraphQLContext
 
 interface SubscriptionFilter<T, S, A> {
@@ -9,7 +10,7 @@ interface SubscriptionFilter<T, S, A> {
 
 @JvmInline
 value class FunctionalSubscriptionFilter<T, S, A>(
-    private val lambda: suspend ResolverParameters<S>.(arguments: A, item: T) -> Boolean
+    private val lambda: suspend ResolverContext<S>.(arguments: A, item: T) -> Boolean
 ) : SubscriptionFilter<T, S, A> {
 
     override suspend fun test(
@@ -18,7 +19,7 @@ value class FunctionalSubscriptionFilter<T, S, A>(
         context: GraphQLContext,
         info: Info,
         item: T
-    ) = with(ResolverParameters(source, context, info)) {
+    ) = with(ResolverContext(source, context, info)) {
         lambda(arguments, item)
     }
 }

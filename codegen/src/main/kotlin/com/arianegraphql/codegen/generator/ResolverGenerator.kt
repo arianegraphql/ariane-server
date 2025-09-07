@@ -2,8 +2,8 @@ package com.arianegraphql.codegen.generator
 
 import com.arianegraphql.codegen.CodegenContext
 import com.arianegraphql.codegen.ktx.kotlinType
-import com.arianegraphql.ktx.Resolver
-import com.arianegraphql.ktx.ResolverParameters
+import com.arianegraphql.server.resolver.Resolver
+import com.arianegraphql.server.resolver.ResolverContext
 import com.arianegraphql.ktx.TypeResolverBuilder
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
@@ -46,7 +46,7 @@ fun FieldDefinition.generateResolverFunction(parent: ClassName, argument: ClassN
 }
 
 private fun functionalResolverLambdaParameter(className: ClassName, argumentType: ClassName, returnType: TypeName): ParameterSpec {
-    val receiver = ResolverParameters::class.asClassName().parameterizedBy(className)
+    val receiver = ResolverContext::class.asClassName().parameterizedBy(className)
     val argumentParam = ParameterSpec.builder("argument", argumentType).build()
 
     return ParameterSpec.builder(

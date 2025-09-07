@@ -9,7 +9,7 @@ import graphql.language.StringValue
 import java.time.Instant
 
 val myServer = arianeServer {
-    schema = loadSchema("schema.graphql")
+    schema = loadSchema("schema.graphqls")
     port = 3000
 
     cors = {

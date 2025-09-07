@@ -1,8 +1,4 @@
 pluginManagement {
-    // Versions are declared in 'gradle.properties'
-    plugins {
-        kotlin("jvm") version "1.8.20"
-    }
     repositories {
         mavenLocal()
         gradlePluginPortal()
@@ -11,7 +7,7 @@ pluginManagement {
 }
 
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS) 
     repositories {
         google()
         mavenCentral()

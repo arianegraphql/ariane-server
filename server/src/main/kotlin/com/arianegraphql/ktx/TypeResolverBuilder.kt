@@ -1,5 +1,9 @@
 package com.arianegraphql.ktx
 
+import com.arianegraphql.server.resolver.FunctionalResolver
+import com.arianegraphql.server.resolver.Resolver
+import com.arianegraphql.server.resolver.ResolverContext
+import com.arianegraphql.server.resolver.toDataFetcher
 import graphql.schema.DataFetcher
 import graphql.schema.idl.TypeRuntimeWiring
 
@@ -14,7 +18,7 @@ open class TypeResolverBuilder<S> {
     }
 
     @JvmName("resolveWithType")
-    inline fun <reified A, R: Any?> resolve(field: String, noinline resolver: suspend ResolverParameters<S>.(A) -> R) {
+    inline fun <reified A, R: Any?> resolve(field: String, noinline resolver: suspend ResolverContext<S>.(A) -> R) {
         typeResolvers[field] = FunctionalResolver(resolver).toDataFetcher()
     }
 

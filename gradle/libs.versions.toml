@@ -1,0 +1,46 @@
+[versions]
+kotlin = "2.2.10"
+kotlinSerialization = "1.8.20"
+coroutines = "1.10.2"
+coroutinesLegacy = "1.5.1"
+ktor = "3.2.3"
+graphqlJava = "25.0.beta-5"
+slf4j = "2.0.17"
+logback = "1.5.18"
+junit = "6.0.0-M2"
+mockk = "1.14.5"
+kotlinFaker = "2.0.0-rc.11"
+kotlinpoet = "2.2.0"
+kotlinxSerialization = "1.9.0"
+jacksonKotlin = "2.20.0"
+gradlePluginPublish = "1.2.1"
+nexusPublish = "2.0.0"
+
+[libraries]
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutines" }
+kotlinx-coroutines-core-legacy = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "coroutinesLegacy" }
+kotlinx-coroutines-reactive = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-reactive", version.ref = "coroutines" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
+
+graphql-java = { module = "com.graphql-java:graphql-java", version.ref = "graphqlJava" }
+slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
+logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
+
+ktor-server-cio = { module = "io.ktor:ktor-server-cio", version.ref = "ktor" }
+ktor-server-websockets = { module = "io.ktor:ktor-server-websockets", version.ref = "ktor" }
+ktor-server-cors = { module = "io.ktor:ktor-server-cors", version.ref = "ktor" }
+
+jackson-module-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jacksonKotlin" }
+kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
+
+junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+kotlin-faker = { module = "io.github.serpro69:kotlin-faker", version.ref = "kotlinFaker" }
+
+[plugins]
+kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlinSerialization" }
+gradle-plugin-publish = { id = "com.gradle.plugin-publish", version.ref = "gradlePluginPublish" }
+nexus-publish = { id = "io.github.gradle-nexus.publish-plugin", version.ref = "nexusPublish" }
