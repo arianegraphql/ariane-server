@@ -1,11 +1,8 @@
 package com.arianegraphql.sample
 
 import com.arianegraphql.ktx.resolvers
-import com.arianegraphql.sample.model.MutationWithNullableScalar
-import com.arianegraphql.sample.model.MutationWithScalarArray
-import com.arianegraphql.sample.model.ProductType
-import com.arianegraphql.sample.model.ResultObject
-import com.example.resolver.*
+import com.arianegraphql.sample.gql.resolver.*
+import com.arianegraphql.sample.gql.type.*
 
 val myResolvers = resolvers {
     Mutation {
@@ -19,7 +16,7 @@ val myResolvers = resolvers {
         mutationWithEnumArray {
             println("Received ${it.input}")
 
-            ProductType.values()
+            ProductType.entries
         }
 
         mutationWithNullableEnum {
@@ -38,12 +35,6 @@ val myResolvers = resolvers {
             println("Received ${it.input}")
 
             listOf(ResultObject("a", "b", "c", ProductType.UNKNOWN))
-        }
-
-        mutationWithInputObjectArray { (input) ->
-            println("Received $input")
-
-            null
         }
 
         mutationWithValues { (string) ->
@@ -69,18 +60,6 @@ val myResolvers = resolvers {
             println("Received $input")
 
             ResultObject("a", "b", "c", ProductType.UNKNOWN)
-        }
-
-        resolve<MutationWithScalarArray>("mutationWithScalarArray") { (input) ->
-            println("Received $input")
-
-            listOf(ResultObject("a", "b", "c", ProductType.UNKNOWN))
-        }
-
-        resolve<MutationWithNullableScalar>("mutationWithNullableScalar") { (input) ->
-            println("Received $input")
-
-            null
         }
     }
 }

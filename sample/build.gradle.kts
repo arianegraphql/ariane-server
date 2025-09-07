@@ -8,7 +8,7 @@ version = "1.0-SNAPSHOT"
 
 dependencies {
     implementation(libs.kotlin.stdlib)
-    implementation(libs.kotlinx.coroutines.core.legacy)
+    implementation(libs.kotlinx.coroutines.core)
 
     implementation(project(":server"))
     implementation(project(":server-ktor"))

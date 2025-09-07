@@ -1,10 +1,10 @@
 package com.arianegraphql.sample
 
 import com.arianegraphql.ktx.loadSchema
-import com.arianegraphql.sample.model.*
+import com.arianegraphql.sample.gql.resolver.*
+import com.arianegraphql.sample.gql.type.*
 import com.arianegraphql.server.ktor.dsl.arianeServer
 import com.arianegraphql.server.listener.ServerListener
-import com.example.resolver.*
 import graphql.language.StringValue
 import java.time.Instant
 
@@ -45,7 +45,7 @@ val myServer = arianeServer {
             mutationWithEnumArray {
                 println("Received ${it.input}")
 
-                ProductType.values()
+                ProductType.entries
             }
 
             mutationWithNullableEnum {
@@ -64,12 +64,6 @@ val myServer = arianeServer {
                 println("Received ${it.input}")
 
                 listOf(ResultObject("a", "b", "c", ProductType.UNKNOWN))
-            }
-
-            mutationWithInputObjectArray { (input) ->
-                println("Received $input")
-
-                null
             }
 
             mutationWithValues { (string) ->
@@ -95,18 +89,6 @@ val myServer = arianeServer {
                 println("Received $input")
 
                 ResultObject("a", "b", "c", ProductType.UNKNOWN)
-            }
-
-            resolve<MutationWithScalarArray>("mutationWithScalarArray") { (input) ->
-                println("Received $input")
-
-                listOf(ResultObject("a", "b", "c", ProductType.UNKNOWN))
-            }
-
-            resolve<MutationWithNullableScalar>("mutationWithNullableScalar") { (input) ->
-                println("Received $input")
-
-                null
             }
         }
     }
