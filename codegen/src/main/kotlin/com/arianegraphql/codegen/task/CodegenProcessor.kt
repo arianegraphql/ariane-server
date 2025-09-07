@@ -11,9 +11,9 @@ import graphql.language.EnumTypeDefinition
 import graphql.language.InputObjectTypeDefinition
 import graphql.language.ObjectTypeDefinition
 
-context(CodegenContext)
+context(ctx: CodegenContext)
 fun CodegenTask.generateCode(): Result<Unit> = runCatching {
-    graphQLSchema.types().values.forEach {
+    ctx.graphQLSchema.types().values.forEach {
         when {
             it is ObjectTypeDefinition && it.name == "Mutation" -> processMutation(it)
             it is ObjectTypeDefinition && it.name == "Query" -> processQuery(it)
@@ -25,35 +25,35 @@ fun CodegenTask.generateCode(): Result<Unit> = runCatching {
     }
 }
 
-context(CodegenContext)
+context(ctx: CodegenContext)
 private fun processMutation(mutationTypeDef: ObjectTypeDefinition) {
     mutationTypeDef.generateAllResolvers(mutationTypeName).write()
 }
 
-context(CodegenContext)
+context(ctx: CodegenContext)
 private fun processQuery(queryTypeDef: ObjectTypeDefinition) {
     queryTypeDef.generateAllResolvers(queryTypeName).write()
 }
 
-context(CodegenContext)
+context(ctx: CodegenContext)
 private fun processSubscription(subscriptionTypeDef: ObjectTypeDefinition) {
     subscriptionTypeDef.generateAllResolvers(subscriptionTypeName).write()
 }
 
-context(CodegenContext)
+context(ctx: CodegenContext)
 private fun processType(typeDef: ObjectTypeDefinition) {
     typeDef.generateFile().write()
 
-    val typeClass = ClassName(packageNameTypes,"$typePrefix${typeDef.name}$typeSuffix")
+    val typeClass = ClassName(ctx.packageNameTypes,"${ctx.typePrefix}${typeDef.name}${ctx.typeSuffix}")
     typeDef.generateAllResolvers(typeClass).write()
 }
 
-context(CodegenContext)
+context(ctx: CodegenContext)
 private fun processEnumType(typeDef: EnumTypeDefinition) {
     typeDef.generateFile().write()
 }
 
-context(CodegenContext)
+context(ctx: CodegenContext)
 private fun processInputType(typeDef: InputObjectTypeDefinition) {
     typeDef.generateFile().write()
 }

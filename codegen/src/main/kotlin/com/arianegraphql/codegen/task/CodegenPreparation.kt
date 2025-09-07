@@ -28,16 +28,16 @@ fun CodegenTask.prepare(): Result<CodegenContext> {
             scalarTypes = scalarTypes,
             graphQLSchema = graphQLSchema,
             buildDir = outputDir.get().asFile,
-            packageName = options.packageName ?: CodegenContext.DefaultPackageName,
+            packageName = options.packageName ?: CodegenContext.DEFAULT_PACKAGE_NAME,
             typeSuffix = options.typeSuffix ?: "",
             typePrefix = options.typePrefix ?: "",
         )
     )
 }
 
-context(CodegenTask)
+context(ctx: CodegenTask)
 private fun getTypeDefinitionRegistry(): Result<TypeDefinitionRegistry> {
-    val schemaFile = schema.orNull?.asFile
+    val schemaFile = ctx.schema.orNull?.asFile
         ?: return Result.failure(Throwable("No GraphQL schema provided. Please add it using ksp argument \n\nariane {\n   schema(file(\"\") \n}\n"))
 
     if (!schemaFile.exists()) {
@@ -51,10 +51,10 @@ private fun getTypeDefinitionRegistry(): Result<TypeDefinitionRegistry> {
     return Result.success(typeDefinitionRegistry)
 }
 
-context(CodegenTask)
+context(ctx: CodegenTask)
 private fun getCodegenOptions(): Result<CodegenOptions> {
-    val configFile = configuration.orNull?.asFile ?: run {
-        logger.info("[ARIANE] No configuration file provided to the codegen. Default configuration will be used.")
+    val configFile = ctx.configuration.orNull?.asFile ?: run {
+        ctx.logger.info("[ARIANE] No configuration file provided to the codegen. Default configuration will be used.")
         return Result.success(CodegenOptions.DefaultOptions)
     }
 

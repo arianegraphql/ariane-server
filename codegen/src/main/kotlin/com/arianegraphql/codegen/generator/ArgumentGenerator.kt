@@ -4,8 +4,8 @@ import com.arianegraphql.codegen.CodegenContext
 import com.squareup.kotlinpoet.*
 import graphql.language.FieldDefinition
 
-context(CodegenContext)
-fun FieldDefinition.generateArgument(parent: ClassName): FileSpec {
+context(ctx: CodegenContext)
+fun FieldDefinition.generateArgument(parent: ClassName, fileSpecBuilder: FileSpec.Builder) {
     val className = generatedArgumentClassName(parent)
 
     val constructor = FunSpec.constructorBuilder()
@@ -21,9 +21,7 @@ fun FieldDefinition.generateArgument(parent: ClassName): FileSpec {
         .addProperties(inputValueDefinitions.map { it.asProperty })
         .build()
 
-    return FileSpec.builder(packageNameTypes, className)
-        .addType(classSpec)
-        .build()
+    fileSpecBuilder.addType(classSpec)
 }
 
 fun FieldDefinition.generatedArgumentClassName(parent: ClassName) = "${parent.simpleName}${name.replaceFirstChar { it.uppercase() }}Argument"

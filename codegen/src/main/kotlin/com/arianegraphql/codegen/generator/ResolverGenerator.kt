@@ -10,26 +10,27 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import graphql.language.FieldDefinition
 import graphql.language.ObjectTypeDefinition
 
-context(CodegenContext)
+context(ctx: CodegenContext)
 fun ObjectTypeDefinition.generateAllResolvers(parent: ClassName): List<FileSpec> {
-    val builder = FileSpec.builder(packageNameResolvers, parent.simpleName)
-
-    val argumentsFile = mutableListOf<FileSpec>()
+    val resolverFiles = mutableListOf<FileSpec>()
 
     fieldDefinitions.forEach {
         val returnType = it.type.kotlinType
-        val argumentClassName = ClassName(packageNameTypes, it.generatedArgumentClassName(parent))
+        val argumentClassName = ClassName(ctx.packageNameResolvers, it.generatedArgumentClassName(parent))
+
+        val builder = FileSpec.builder(ctx.packageNameResolvers, "${parent.simpleName}.${it.name}")
+
+        it.generateArgument(parent, builder)
         it.generateResolverFunction(parent, argumentClassName, returnType, builder)
         it.generateResolverInterface(parent, argumentClassName, returnType, builder)
-        argumentsFile += it.generateArgument(parent)
+
+        resolverFiles += builder.build()
     }
 
-    argumentsFile += builder.build()
-
-    return argumentsFile
+    return resolverFiles
 }
 
-context(CodegenContext)
+context(ctx: CodegenContext)
 fun FieldDefinition.generateResolverFunction(parent: ClassName, argument: ClassName, returnType: TypeName, fileSpecBuilder: FileSpec.Builder) {
     val functionReceiver = TypeResolverBuilder::class.asClassName()
         .parameterizedBy(parent)
@@ -73,8 +74,8 @@ fun FieldDefinition.generateResolverInterface(parent: ClassName, argument: Class
         .receiver(functionReceiver)
         .addParameter(
             ParameterSpec.builder(
-            RESOLVER_PARAMETER_NAME, ClassName(fileSpecBuilder.packageName, interfaceName)
-        ).build())
+                RESOLVER_PARAMETER_NAME, ClassName(fileSpecBuilder.packageName, interfaceName)
+            ).build())
         .addCode("resolve(%S, $RESOLVER_PARAMETER_NAME)", name)
         .build()
 

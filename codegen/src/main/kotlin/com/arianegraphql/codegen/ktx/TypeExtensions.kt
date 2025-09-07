@@ -3,33 +3,34 @@ package com.arianegraphql.codegen.ktx
 import com.arianegraphql.codegen.CodegenContext
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
-import graphql.language.NonNullType
 import graphql.language.Type
 
-context(CodegenContext)
+context(ctx: CodegenContext)
 val Type<*>.kotlinType: TypeName
     get() = when (this) {
         is graphql.language.TypeName -> nullableType
 
         is graphql.language.ListType -> listType
 
-        is NonNullType -> nonNullType
+        is graphql.language.NonNullType -> nonNullType
 
         else -> {
-            logger.error("${this::class.java.simpleName} cannot be handled")
+            ctx.logger.error("${this::class.java.simpleName} cannot be handled")
             ANY
         }
     }
 
-context(CodegenContext)
+context(ctx: CodegenContext)
 private val graphql.language.ListType.listType: TypeName
     get() = LIST.parameterizedBy(type.kotlinType).copy(nullable = true)
 
-context(CodegenContext)
+context(ctx: CodegenContext)
 private val graphql.language.NonNullType.nonNullType: TypeName
     get() = type.kotlinType.copy(nullable = false)
 
-context(CodegenContext)
+context(ctx: CodegenContext)
 private val graphql.language.TypeName.nullableType: TypeName
-    get() = (scalarTypes[name] ?: ClassName(packageNameTypes, "$typePrefix$name$typeSuffix")).copy(nullable = true)
+    get() = (ctx.scalarTypes[name] ?: ClassName(ctx.packageNameTypes, "${ctx.typePrefix}$name${ctx.typeSuffix}")).copy(
+        nullable = true
+    )
 

@@ -3,10 +3,10 @@ package com.arianegraphql.codegen.task
 import com.arianegraphql.codegen.CodegenContext
 import com.squareup.kotlinpoet.FileSpec
 
-context(CodegenContext)
+context(ctx: CodegenContext)
 fun FileSpec.write() {
-    writeTo(buildDir)
+    writeTo(ctx.buildDir)
 }
 
-context(CodegenContext)
+context(ctx: CodegenContext)
 fun List<FileSpec>.write() = forEach { it.write() }

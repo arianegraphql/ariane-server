@@ -22,6 +22,6 @@ data class CodegenContext(
         get() = "$packageName.resolver"
 
     companion object {
-        const val DefaultPackageName = "com.arianegraphql.codegen"
+        const val DEFAULT_PACKAGE_NAME = "com.arianegraphql.codegen"
     }
 }

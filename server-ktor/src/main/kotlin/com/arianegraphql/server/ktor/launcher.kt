@@ -38,11 +38,12 @@ fun ArianeKtorServerConfiguration.launch(wait: Boolean = true) {
         routing {
             route(path) {
                 post {
-                    with(arianeServer) { handleGraphQLRequest() }
+                    call.request
+                    context(arianeServer) { handleGraphQLRequest() }
                 }
 
                 get {
-                    with(arianeServer) { handleGraphQLRequest() }
+                    context(arianeServer) { handleGraphQLRequest() }
                 }
             }
 

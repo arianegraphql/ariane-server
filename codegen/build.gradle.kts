@@ -8,12 +8,12 @@ plugins {
 }
 
 dependencies {
-    implementation("com.squareup:kotlinpoet:1.15.3")
+    implementation("com.squareup:kotlinpoet:2.2.0")
 
-    implementation("com.graphql-java:graphql-java:21.3")
+    implementation("com.graphql-java:graphql-java:25.0.beta-5")
     implementation(project(":server"))
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 }
 
 gradlePlugin {
@@ -26,13 +26,13 @@ gradlePlugin {
             displayName = "ArianeGraphQL codegen plugin"
             implementationClass = "com.arianegraphql.codegen.CodegenPlugin"
             description = "ArianeGraphQL codegen plugin"
-            tags.set(listOf("graphql"))
+            tags = listOf("graphql")
         }
     }
 }
 
 tasks.named("compileKotlin", org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask::class.java) {
     compilerOptions {
-        freeCompilerArgs.add("-Xcontext-receivers")
+        freeCompilerArgs.add("-Xcontext-parameters")
     }
 }

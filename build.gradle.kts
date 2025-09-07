@@ -1,24 +1,15 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-    kotlin("jvm") version "1.8.20"
+    kotlin("jvm") version "2.2.10"
     signing
     `maven-publish`
-    id("io.github.gradle-nexus.publish-plugin") version "1.0.0"
+    id("io.github.gradle-nexus.publish-plugin") version "2.0.0"
 }
 
 group = "com.arianegraphql"
-version = "0.3.4"
+version = "0.3.5"
+
 
 subprojects {
-    tasks.withType<KotlinCompile> {
-        kotlinOptions {
-            jvmTarget = "17"
-            languageVersion = "1.8"
-            apiVersion = "1.8"
-        }
-    }
-
     tasks.withType<Test> {
         useJUnitPlatform()
     }
@@ -29,10 +20,10 @@ subprojects {
 
     dependencies {
         implementation(kotlin("stdlib"))
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.0")
-        testImplementation("org.junit.jupiter:junit-jupiter:5.7.0")
-        testImplementation("io.mockk:mockk:1.10.6")
-        testImplementation("io.github.serpro69:kotlin-faker:1.6.0")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:6.0.0-M2")
+        testImplementation("org.junit.jupiter:junit-jupiter:6.0.0-M2")
+        testImplementation("io.mockk:mockk:1.14.5")
+        testImplementation("io.github.serpro69:kotlin-faker:2.0.0-rc.11")
     }
 
     tasks {
@@ -88,7 +79,7 @@ subprojects {
             val signingKey = project.property("GPG_SECRET") as String?
 
             useInMemoryPgpKeys(signingKey, signingPassword)
-            sign(publishing.publications)
+            sign(publishing.publications["mavenJava"])
         }
     }
 }

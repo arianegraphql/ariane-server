@@ -8,13 +8,13 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import graphql.language.*
 
-context(CodegenContext)
+context(ctx: CodegenContext)
 fun ObjectTypeDefinition.generateFile(): FileSpec {
     val constructor = FunSpec.constructorBuilder()
         .addParameters(fieldDefinitions.map { it.asNullableParameter })
         .build()
 
-    val classSpec = TypeSpec.classBuilder("$typePrefix$name$typeSuffix").apply {
+    val classSpec = TypeSpec.classBuilder("${ctx.typePrefix}$name${ctx.typeSuffix}").apply {
         if (fieldDefinitions.isNotEmpty()) {
             addModifiers(KModifier.DATA)
         }
@@ -23,19 +23,19 @@ fun ObjectTypeDefinition.generateFile(): FileSpec {
         .addProperties(fieldDefinitions.map { it.asNullableProperty })
         .build()
 
-    return FileSpec.builder(packageNameTypes, name)
+    return FileSpec.builder(ctx.packageNameTypes, name)
         .addType(classSpec)
         .addFunction(generateRootResolver())
         .build()
 }
 
-context(CodegenContext)
+context(ctx: CodegenContext)
 fun InputObjectTypeDefinition.generateFile(): FileSpec {
     val constructor = FunSpec.constructorBuilder()
         .addParameters(inputValueDefinitions.map { it.asParameter })
         .build()
 
-    val classSpec = TypeSpec.classBuilder("$typePrefix$name$typeSuffix").apply {
+    val classSpec = TypeSpec.classBuilder("${ctx.typePrefix}$name${ctx.typeSuffix}").apply {
         if (inputValueDefinitions.isNotEmpty()) {
             addModifiers(KModifier.DATA)
         }
@@ -44,18 +44,18 @@ fun InputObjectTypeDefinition.generateFile(): FileSpec {
         .addProperties(inputValueDefinitions.map { it.asProperty })
         .build()
 
-    return FileSpec.builder(packageNameTypes, name)
+    return FileSpec.builder(ctx.packageNameTypes, name)
         .addType(classSpec)
         .build()
 }
 
-context(CodegenContext)
+context(ctx: CodegenContext)
 val FieldDefinition.asNullableParameter: ParameterSpec
     get() = ParameterSpec.builder(this.name, type.kotlinType.copy(nullable = true))
         .defaultValue("null")
         .build()
 
-context(CodegenContext)
+context(ctx: CodegenContext)
 val FieldDefinition.asNullableProperty: PropertySpec
     get() = PropertySpec
         .builder(name, type.kotlinType.copy(nullable = true))
@@ -63,25 +63,25 @@ val FieldDefinition.asNullableProperty: PropertySpec
         .build()
 
 
-context(CodegenContext)
+context(ctx: CodegenContext)
 val InputValueDefinition.asParameter: ParameterSpec
     get() = ParameterSpec.builder(this.name, type.kotlinType)
         .build()
 
-context(CodegenContext)
+context(ctx: CodegenContext)
 val InputValueDefinition.asProperty: PropertySpec
     get() = PropertySpec
         .builder(name, type.kotlinType)
         .initializer(name)
         .build()
 
-context(CodegenContext)
+context(ctx: CodegenContext)
 fun ObjectTypeDefinition.generateRootResolver(): FunSpec {
     val functionReceiver = typeNameOf<RootResolverBuilder>().copy(
         annotations = emptyList()
     )
 
-    val className = ClassName(packageNameTypes, "$typePrefix$name$typeSuffix")
+    val className = ClassName(ctx.packageNameTypes, "${ctx.typePrefix}$name${ctx.typeSuffix}")
 
     return FunSpec.builder(name)
         .receiver(functionReceiver)
