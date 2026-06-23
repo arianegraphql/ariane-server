@@ -27,7 +27,8 @@ fun CodegenTask.generateCode(): Result<Unit> = runCatching {
 
 context(ctx: CodegenContext)
 private fun processMutation(mutationTypeDef: ObjectTypeDefinition) {
-    mutationTypeDef.generateAllResolvers(mutationTypeName).write()
+    // Mutations execute serially: batching makes no sense there
+    mutationTypeDef.generateAllResolvers(mutationTypeName, supportsBatch = false).write()
 }
 
 context(ctx: CodegenContext)
@@ -37,7 +38,7 @@ private fun processQuery(queryTypeDef: ObjectTypeDefinition) {
 
 context(ctx: CodegenContext)
 private fun processSubscription(subscriptionTypeDef: ObjectTypeDefinition) {
-    subscriptionTypeDef.generateAllResolvers(subscriptionTypeName).write()
+    subscriptionTypeDef.generateAllResolvers(subscriptionTypeName, supportsBatch = false).write()
 }
 
 context(ctx: CodegenContext)

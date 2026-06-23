@@ -1,13 +1,18 @@
 package com.arianegraphql.ktx
 
+import com.arianegraphql.server.dataloader.BatchDataLoaderFactory
 import graphql.schema.idl.TypeRuntimeWiring
 
 @GraphQLSchemaDslMarker
 class RootResolverBuilder {
     private val rootResolver = mutableListOf<TypeRuntimeWiring.Builder>()
 
+    internal val batchLoaderFactories = mutableMapOf<String, BatchDataLoaderFactory>()
+
     fun <S> type(typeName: String, builder: TypeResolverBuilder<S>.() -> Unit) {
-        rootResolver.add(TypeResolverBuilder<S>().apply(builder).build(typeName))
+        val typeBuilder = TypeResolverBuilder<S>().apply(builder)
+        rootResolver.add(typeBuilder.build(typeName))
+        batchLoaderFactories += typeBuilder.dataLoaderFactories(typeName)
     }
 
     fun RootResolverBuilder.Mutation(builder: TypeResolverBuilder<GraphQLTypes.Mutation>.() -> Unit) =

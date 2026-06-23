@@ -2,12 +2,15 @@ package com.arianegraphql.server.config
 
 import com.arianegraphql.server.ArianeServerImpl
 import com.arianegraphql.server.context.ContextResolver
+import com.arianegraphql.server.dataloader.BatchLoaderRegistrar
+import com.arianegraphql.server.dataloader.DataLoaderRegistryProvider
 import com.arianegraphql.server.json.JsonSerializer
 import com.arianegraphql.server.listener.RequestListener
 import com.arianegraphql.server.listener.ServerListener
 import com.arianegraphql.server.listener.SubscriptionListener
 import graphql.GraphQL
 import graphql.schema.Coercing
+import graphql.validation.QueryComplexityLimits
 
 open class ArianeServerConfiguration(
     val schema: GraphQL,
@@ -21,7 +24,21 @@ open class ArianeServerConfiguration(
     val serverListener: ServerListener?,
     val requestListener: RequestListener?,
     val subscriptionListener: SubscriptionListener?,
+    val dataLoaderRegistryProvider: DataLoaderRegistryProvider?,
+    val queryComplexityLimits: QueryComplexityLimits? = null,
+    val batchLoaderRegistrar: BatchLoaderRegistrar = BatchLoaderRegistrar.EMPTY,
 )
 
 fun ArianeServerConfiguration.newArianeServer(jsonSerializer: JsonSerializer) =
-    ArianeServerImpl(schema, scalarTypes, isPlaygroundEnabled, contextResolver, requestListener, subscriptionListener, jsonSerializer)
+    ArianeServerImpl(
+        schema,
+        scalarTypes,
+        isPlaygroundEnabled,
+        contextResolver,
+        requestListener,
+        subscriptionListener,
+        dataLoaderRegistryProvider,
+        jsonSerializer,
+        queryComplexityLimits = queryComplexityLimits,
+        batchLoaderRegistrar = batchLoaderRegistrar,
+    )

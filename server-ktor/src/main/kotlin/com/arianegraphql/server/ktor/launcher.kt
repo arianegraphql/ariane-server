@@ -15,6 +15,10 @@ import io.ktor.server.plugins.cors.routing.CORS
 fun ArianeKtorServerConfiguration.launch(wait: Boolean = true) {
     val arianeServer = newArianeServer(JacksonSerializer)
 
+    // Captured locally: inside routing {} the receiver is a Route, and since Ktor 3.5
+    // the Route.path extension shadows this configuration's path property.
+    val graphQLPath = path
+
     initLoggers()
     arianeServer.initializeServer()
 
@@ -24,11 +28,11 @@ fun ArianeKtorServerConfiguration.launch(wait: Boolean = true) {
         corsConfig?.let { install(CORS, it) }
 
         serverListener?.let { listener ->
-            environment.monitor.subscribe(ApplicationStarted) {
-                listener.onStart(host, port, path)
+            monitor.subscribe(ApplicationStarted) {
+                listener.onStart(host, port, graphQLPath)
             }
 
-            environment.monitor.subscribe(ApplicationStopped) {
+            monitor.subscribe(ApplicationStopped) {
                 listener.onStop()
             }
         }
@@ -36,7 +40,7 @@ fun ArianeKtorServerConfiguration.launch(wait: Boolean = true) {
         ktorPlugin?.invoke(this)
 
         routing {
-            route(path) {
+            route(graphQLPath) {
                 post {
                     call.request
                     context(arianeServer) { handleGraphQLRequest() }
@@ -47,7 +51,7 @@ fun ArianeKtorServerConfiguration.launch(wait: Boolean = true) {
                 }
             }
 
-            webSocket(path, "graphql-ws") {
+            webSocket(graphQLPath, "graphql-ws") {
                 with(arianeServer) { handleGraphQLSubscription() }
             }
         }

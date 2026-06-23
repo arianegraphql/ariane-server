@@ -31,7 +31,7 @@ internal class RequestPerformerImplTest {
         val graphQLExecutionResult: ExecutionResult = mockk()
         every { mockSchema.execute(capture(inputSlot)) } returns graphQLExecutionResult
 
-        val result = requestPerformer.performRequest(graphQLRequest, context, mockRequestListener)
+        val result = requestPerformer.performRequest(graphQLRequest, context, null, mockRequestListener)
 
         verify { mockRequestListener.onValidated(any()) }
         assert(result.isSuccess)
@@ -39,7 +39,7 @@ internal class RequestPerformerImplTest {
         assertEquals(inputSlot.captured.operationName, graphQLRequest.operationName)
         assertEquals(inputSlot.captured.query, graphQLRequest.query)
         assertEquals(inputSlot.captured.variables, graphQLRequest.variables)
-        assertEquals(inputSlot.captured.context, context)
+        assertEquals(42, inputSlot.captured.graphQLContext.get<Int>("userID"))
     }
 
     @Test
@@ -55,7 +55,7 @@ internal class RequestPerformerImplTest {
         assertEquals(inputSlot.captured.operationName, graphQLRequest.operationName)
         assertEquals(inputSlot.captured.query, graphQLRequest.query)
         assertEquals(inputSlot.captured.variables, graphQLRequest.variables)
-        assertEquals(inputSlot.captured.context, context)
+        assertEquals(42, inputSlot.captured.graphQLContext.get<Int>("userID"))
     }
 
     private companion object {

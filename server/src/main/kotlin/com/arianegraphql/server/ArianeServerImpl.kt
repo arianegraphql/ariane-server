@@ -4,6 +4,9 @@ import com.arianegraphql.ktx.argumentTypeResolver
 import com.arianegraphql.ktx.toGraphQLResponse
 import com.arianegraphql.server.async.*
 import com.arianegraphql.server.context.ContextResolver
+import com.arianegraphql.server.dataloader.BatchLoaderRegistrar
+import com.arianegraphql.server.dataloader.DataLoaderRegistryProvider
+import com.arianegraphql.server.dataloader.buildRequestDataLoaderRegistry
 import com.arianegraphql.server.graphql.*
 import com.arianegraphql.server.json.JsonSerializer
 import com.arianegraphql.server.listener.RequestListener
@@ -14,6 +17,7 @@ import com.arianegraphql.server.response.HttpResponse
 import graphql.GraphQL
 import graphql.GraphQLContext
 import graphql.schema.Coercing
+import graphql.validation.QueryComplexityLimits
 import kotlinx.coroutines.flow.*
 
 class ArianeServerImpl(
@@ -23,14 +27,19 @@ class ArianeServerImpl(
     private val contextResolver: ContextResolver,
     private val requestListener: RequestListener?,
     private val subscriptionListener: SubscriptionListener?,
+    private val dataLoaderRegistryProvider: DataLoaderRegistryProvider?,
     private val jsonSerializer: JsonSerializer,
+    queryComplexityLimits: QueryComplexityLimits? = null,
+    private val batchLoaderRegistrar: BatchLoaderRegistrar = BatchLoaderRegistrar.EMPTY,
     playgroundRenderer: PlaygroundRenderer = PlaygroundRendererImpl(),
-    requestPerformer: RequestPerformer = RequestPerformerImpl(schema),
+    requestPerformer: RequestPerformer = RequestPerformerImpl(schema, queryComplexityLimits),
     subscriptionHandler: SubscriptionHandler = SubscriptionHandlerImpl(
         jsonSerializer,
         requestPerformer,
         requestListener,
-        subscriptionListener
+        subscriptionListener,
+        dataLoaderRegistryProvider = dataLoaderRegistryProvider,
+        batchLoaderRegistrar = batchLoaderRegistrar,
     )
 ) : ArianeServer, PlaygroundRenderer by playgroundRenderer, JsonSerializer by jsonSerializer,
     RequestPerformer by requestPerformer,
@@ -53,13 +62,17 @@ class ArianeServerImpl(
 
         requestListener?.onParsed(graphQLRequest)
 
+        val resolvedContext = contextResolver.resolveContext(httpRequest)
+
         val ctx = GraphQLContext
             .newContext()
-            .of(contextResolver.resolveContext(httpRequest))
+            .of(resolvedContext)
             .argumentTypeResolver(jsonSerializer)
             .build()
 
-        val response = performRequest(graphQLRequest, ctx, requestListener)
+        val dataLoaderRegistry = buildRequestDataLoaderRegistry(dataLoaderRegistryProvider, batchLoaderRegistrar, httpRequest, ctx)
+
+        val response = performRequest(graphQLRequest, ctx, dataLoaderRegistry, requestListener)
             .map { executionResult ->
                 val response = executionResult.toGraphQLResponse()
                 requestListener?.onExecuted(response)

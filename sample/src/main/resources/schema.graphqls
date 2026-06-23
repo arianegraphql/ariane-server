@@ -55,6 +55,22 @@ type Mutation {
     mutationWithNullableScalar(input: Date): ResultObject
 }
 
+type User {
+    id: ID!
+    name: String!
+    email: String!
+}
+
+type Post {
+    id: ID!
+    title: String!
+    content: String!
+    authorId: ID!
+    author: User!
+}
+
 type Query {
     helloWorld: String
+    posts: [Post!]!
+    post(id: ID!): Post
 }

@@ -1,8 +1,8 @@
 package com.arianegraphql.server.graphql
 
 data class GraphQLRequest(
-    val operationName: String?,
+    val operationName: String? = null,
     val query: String,
-    val variables: Map<String, Any?>,
-    val extensions: Any?
+    val variables: Map<String, Any?>? = null,
+    val extensions: Any? = null
 )

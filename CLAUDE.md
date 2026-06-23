@@ -61,13 +61,13 @@ The sample demonstrates:
 
 ## Development Notes
 
-- Kotlin version: 2.2.10
+- Kotlin version: 2.4.0
 - Java version: 17
 - Uses kotlinx-coroutines for async resolver support
-- GraphQL Java library version: 25.0.beta-5
+- GraphQL Java library version: 26.0
 - Generated code is placed in `build/generated/ariane/main/kotlin/`
-- The framework uses context parameters (`-Xcontext-parameters` compiler flag)
-- All modules use JUnit 5 for testing with MockK and Kotlin Faker
+- The framework uses context parameters (stable since Kotlin 2.4, no compiler flag needed)
+- All modules use JUnit 6 for testing with MockK and Kotlin Faker
 
 ## Project Structure
 

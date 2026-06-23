@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.kotlin.jvm)
     id("com.arianegraphql.codegen") version "0.3.5"
+    application
 }
 
 group = "com.arianegraphql"
@@ -21,6 +22,10 @@ sourceSets {
             srcDir("build/generated/ariane/main/kotlin")
         }
     }
+}
+
+application {
+    mainClass.set("com.arianegraphql.sample.MainKt")
 }
 
 ariane {

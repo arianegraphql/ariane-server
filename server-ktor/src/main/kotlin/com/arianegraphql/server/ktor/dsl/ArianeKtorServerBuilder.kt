@@ -2,6 +2,7 @@ package com.arianegraphql.server.ktor.dsl
 
 import com.arianegraphql.ktx.GraphQLSchemaDslMarker
 import com.arianegraphql.ktx.makeExecutableSchema
+import com.arianegraphql.server.dataloader.BatchLoaderRegistrar
 import com.arianegraphql.server.dsl.ArianeServerBuilder
 import graphql.GraphQL
 import java.lang.IllegalStateException
@@ -40,6 +41,9 @@ fun arianeServer(builder: ArianeKtorServerBuilder.() -> Unit): ArianeKtorServerC
         config.serverListener,
         config.requestListener,
         config.subscriptionListener,
-        config.ktorPlugin
+        config.dataLoaderRegistryProvider,
+        config.ktorPlugin,
+        config.queryComplexityLimits,
+        BatchLoaderRegistrar(config.batchLoaderFactories.toMap())
     )
 }

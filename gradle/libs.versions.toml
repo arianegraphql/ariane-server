@@ -1,18 +1,19 @@
 [versions]
-kotlin = "2.2.10"
-kotlinSerialization = "2.2.10"
-coroutines = "1.10.2"
-ktor = "3.2.3"
-graphqlJava = "25.0.beta-5"
-slf4j = "2.0.17"
-logback = "1.5.18"
-junit = "6.0.0-M2"
-mockk = "1.14.5"
-kotlinFaker = "2.0.0-rc.11"
-kotlinpoet = "2.2.0"
-kotlinxSerialization = "1.9.0"
-jacksonKotlin = "2.20.0"
-gradlePluginPublish = "1.2.1"
+kotlin = "2.4.0"
+kotlinSerialization = "2.4.0"
+coroutines = "1.11.0"
+ktor = "3.5.0"
+graphqlJava = "26.0"
+javaDataloader = "6.0.0"
+slf4j = "2.0.18"
+logback = "1.5.34"
+junit = "6.1.0"
+mockk = "1.14.11"
+kotlinFaker = "2.0.0-rc.13"
+kotlinpoet = "2.3.0"
+kotlinxSerialization = "1.11.0"
+jacksonKotlin = "2.22.0"
+gradlePluginPublish = "2.1.1"
 nexusPublish = "2.0.0"
 
 [libraries]
@@ -22,6 +23,7 @@ kotlinx-coroutines-reactive = { module = "org.jetbrains.kotlinx:kotlinx-coroutin
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 
 graphql-java = { module = "com.graphql-java:graphql-java", version.ref = "graphqlJava" }
+java-dataloader = { module = "com.graphql-java:java-dataloader", version.ref = "javaDataloader" }
 slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "slf4j" }
 logback-classic = { module = "ch.qos.logback:logback-classic", version.ref = "logback" }
 
@@ -34,6 +36,7 @@ kotlinpoet = { module = "com.squareup:kotlinpoet", version.ref = "kotlinpoet" }
 
 junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "junit" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "junit" }
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 kotlin-faker = { module = "io.github.serpro69:kotlin-faker", version.ref = "kotlinFaker" }
 

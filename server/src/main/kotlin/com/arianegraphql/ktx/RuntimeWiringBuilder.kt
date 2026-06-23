@@ -1,5 +1,6 @@
 package com.arianegraphql.ktx
 
+import com.arianegraphql.server.dataloader.BatchDataLoaderFactory
 import graphql.schema.Coercing
 import graphql.schema.GraphQLScalarType
 import graphql.schema.idl.RuntimeWiring
@@ -10,9 +11,13 @@ import graphql.schema.idl.TypeRuntimeWiring
 open class RuntimeWiringBuilder {
     val runtimeWiringBuilder: RuntimeWiring.Builder = newRuntimeWiring()
     val registeredScalarTypes: MutableMap<Class<*>, Coercing<*, *>> = mutableMapOf()
+    val batchLoaderFactories: MutableMap<String, BatchDataLoaderFactory> = mutableMapOf()
 
-    fun resolvers(builder: RootResolverBuilder.() -> Unit) =
-        addResolvers(RootResolverBuilder().apply(builder).build())
+    fun resolvers(builder: RootResolverBuilder.() -> Unit) {
+        val rootBuilder = RootResolverBuilder().apply(builder)
+        addResolvers(rootBuilder.build())
+        batchLoaderFactories += rootBuilder.batchLoaderFactories
+    }
 
     fun addResolvers(resolvers: List<TypeRuntimeWiring.Builder>) = resolvers.forEach(runtimeWiringBuilder::type)
 

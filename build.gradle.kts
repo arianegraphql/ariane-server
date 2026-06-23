@@ -9,6 +9,8 @@ group = "com.arianegraphql"
 version = "0.3.5"
 
 
+val testLibs = libs
+
 subprojects {
     tasks.withType<Test> {
         useJUnitPlatform()
@@ -24,10 +26,11 @@ subprojects {
 
     dependencies {
         implementation(kotlin("stdlib"))
-        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:6.0.0-M2")
-        testImplementation("org.junit.jupiter:junit-jupiter:6.0.0-M2")
-        testImplementation("io.mockk:mockk:1.14.5")
-        testImplementation("io.github.serpro69:kotlin-faker:2.0.0-rc.11")
+        testRuntimeOnly(testLibs.junit.jupiter.engine)
+        testRuntimeOnly(testLibs.junit.platform.launcher)
+        testImplementation(testLibs.junit.jupiter)
+        testImplementation(testLibs.mockk)
+        testImplementation(testLibs.kotlin.faker)
     }
 
     // Skip publication configuration for codegen module as it's a Gradle plugin
@@ -41,7 +44,7 @@ subprojects {
             }
             val javadocJar by registering(Jar::class) {
                 archiveClassifier.set("javadoc")
-                from("$buildDir/javadoc")
+                from(layout.buildDirectory.dir("javadoc"))
             }
 
             publishing {
@@ -98,8 +101,11 @@ tasks {
     nexusPublishing {
         repositories {
             sonatype {
-                nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
-                snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+                // OSSRH (s01.oss.sonatype.org) was shut down on June 30, 2025;
+                // publishing goes through the Central Portal's OSSRH Staging API
+                // compatibility service and requires a Central Portal user token.
+                nexusUrl.set(uri("https://ossrh-staging-api.central.sonatype.com/service/local/"))
+                snapshotRepositoryUrl.set(uri("https://central.sonatype.com/repository/maven-snapshots/"))
                 username.set(project.property("SONATYPE_USERNAME") as String?)
                 password.set(project.property("SONATYPE_PASSWORD") as String?)
             }

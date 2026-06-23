@@ -3,6 +3,9 @@ package com.arianegraphql.server.async
 import com.arianegraphql.ktx.argumentTypeResolver
 import com.arianegraphql.server.context.ContextResolver
 import com.arianegraphql.ktx.toWebSocketPayload
+import com.arianegraphql.server.dataloader.BatchLoaderRegistrar
+import com.arianegraphql.server.dataloader.DataLoaderRegistryProvider
+import com.arianegraphql.server.dataloader.buildRequestDataLoaderRegistry
 import com.arianegraphql.server.graphql.RequestPerformer
 import com.arianegraphql.server.json.JsonSerializer
 import com.arianegraphql.server.listener.RequestListener
@@ -24,7 +27,9 @@ class SubscriptionHandlerImpl(
     private val requestListener: RequestListener?,
     private val subscriptionListener: SubscriptionListener?,
     private val sessionStore: SessionStore = SessionStoreImpl(),
-    private val operationStore: OperationStore = OperationStoreImpl()
+    private val operationStore: OperationStore = OperationStoreImpl(),
+    private val dataLoaderRegistryProvider: DataLoaderRegistryProvider? = null,
+    private val batchLoaderRegistrar: BatchLoaderRegistrar = BatchLoaderRegistrar.EMPTY,
 ) : SubscriptionHandler, JsonSerializer by jsonSerializer, RequestPerformer by requestPerformer {
 
     override suspend fun initSubscription(
@@ -59,8 +64,11 @@ class SubscriptionHandlerImpl(
 
                 subscriptionListener?.onStartSubscription(wsRequest.sessionId, context, operationId, graphQLRequest)
 
-                performRequest(graphQLRequest, context, requestListener)
-                    .map { it.getData<Publisher<ExecutionResult>>().asFlow() }
+                val dataLoaderRegistry =
+                    buildRequestDataLoaderRegistry(dataLoaderRegistryProvider, batchLoaderRegistrar, wsRequest, context)
+
+                performRequest(graphQLRequest, context, dataLoaderRegistry, requestListener)
+                    .map { it.getData<Publisher<ExecutionResult>>()?.asFlow() ?: emptyFlow() }
                     .getOrElse { emptyFlow() }
                     .collect { emit(serializeWebSocketPayload(it.toWebSocketPayload(wsPayload.id))) }
             }

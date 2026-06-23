@@ -1,7 +1,6 @@
 package com.arianegraphql.server.store
 
 import graphql.GraphQLContext
-import io.github.serpro69.kfaker.Faker
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -24,7 +23,7 @@ internal class SessionStoreImplTest {
         val sessionId = "foobar"
         val fakeContext = GraphQLContext.of(
             mutableMapOf<Any, Any>(
-                "favoriteGalaxy" to Faker().space.galaxy()
+                "favoriteGalaxy" to "Milky Way"
             )
         )
 
@@ -38,7 +37,7 @@ internal class SessionStoreImplTest {
         val sessionId = "FOO_BAR"
         val fakeContext = GraphQLContext.of(
             mutableMapOf<Any, Any>(
-                "favoriteGalaxy" to Faker().space.galaxy()
+                "favoriteGalaxy" to "Milky Way"
             )
         )
 

@@ -1,6 +1,9 @@
 package com.arianegraphql.sample
 
 import com.arianegraphql.ktx.loadSchema
+import com.arianegraphql.sample.data.Post
+import com.arianegraphql.sample.data.PostRepository
+import com.arianegraphql.sample.data.UserRepository
 import com.arianegraphql.sample.gql.resolver.*
 import com.arianegraphql.sample.gql.type.*
 import com.arianegraphql.server.ktor.dsl.arianeServer
@@ -21,6 +24,22 @@ val myServer = arianeServer {
         override fun onStart(host: String, port: Int, path: String) {
             println("Server ready 🚀")
             println("Listening at http://localhost:$port$path")
+            println("\n=== Simplified Batch Resolver Demo ===")
+            println("Try this query to see automatic batching in action:")
+            println("""
+                query { 
+                  posts {
+                    id
+                    title
+                    author {
+                      id
+                      name
+                      email
+                    }
+                  }
+                }
+            """.trimIndent())
+            println("\nNotice how batch resolvers are registered inline - no manual DataLoader setup needed!\n")
         }
     }
 
@@ -34,6 +53,49 @@ val myServer = arianeServer {
     }
 
     resolvers {
+        // Query resolvers
+        Query {
+
+            posts { _ ->
+                println("\n[QUERY] Fetching all posts...")
+                PostRepository.findAll().map {
+                    com.arianegraphql.sample.gql.type.Post(
+                        id = it.id,
+                        title = it.title,
+                        content = it.content,
+                        authorId = it.authorId
+                    )
+                }
+            }
+
+            post { args ->
+                println("\n[QUERY] Fetching post by ID: ${args.id}")
+                PostRepository.findById(args.id)?.let {
+                    com.arianegraphql.sample.gql.type.Post(
+                        id = it.id,
+                        title = it.title,
+                        content = it.content,
+                        authorId = it.authorId
+                    )
+                }
+            }
+        }
+
+        Post {
+
+            author.batch(
+                key = { _, post -> post.authorId!! }
+            ) { keys ->
+                println("\n[BATCH RESOLVER] Fetching ${keys.size} users in a single batch:")
+                println("[BATCH RESOLVER] User IDs: ${keys.joinToString(", ")}")
+
+                val users = UserRepository.findAllByIds(keys.toList()).filterNotNull()
+
+                println("[BATCH RESOLVER] Successfully fetched ${users.size} users\n")
+                users.associate { it.id to User(it.id, it.name, it.email) }
+            }
+        }
+
         Mutation {
 
             mutationWithEnum {

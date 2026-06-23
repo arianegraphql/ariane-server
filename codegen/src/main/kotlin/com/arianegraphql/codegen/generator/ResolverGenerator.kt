@@ -3,7 +3,6 @@ package com.arianegraphql.codegen.generator
 import com.arianegraphql.codegen.CodegenContext
 import com.arianegraphql.codegen.ktx.kotlinType
 import com.arianegraphql.server.resolver.Resolver
-import com.arianegraphql.server.resolver.ResolverContext
 import com.arianegraphql.ktx.TypeResolverBuilder
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
@@ -11,7 +10,7 @@ import graphql.language.FieldDefinition
 import graphql.language.ObjectTypeDefinition
 
 context(ctx: CodegenContext)
-fun ObjectTypeDefinition.generateAllResolvers(parent: ClassName): List<FileSpec> {
+fun ObjectTypeDefinition.generateAllResolvers(parent: ClassName, supportsBatch: Boolean = true): List<FileSpec> {
     val resolverFiles = mutableListOf<FileSpec>()
 
     fieldDefinitions.forEach {
@@ -21,42 +20,13 @@ fun ObjectTypeDefinition.generateAllResolvers(parent: ClassName): List<FileSpec>
         val builder = FileSpec.builder(ctx.packageNameResolvers, "${parent.simpleName}.${it.name}")
 
         it.generateArgument(parent, builder)
-        it.generateResolverFunction(parent, argumentClassName, returnType, builder)
         it.generateResolverInterface(parent, argumentClassName, returnType, builder)
+        it.generateFieldRefProperty(parent, argumentClassName, returnType, supportsBatch, builder)
 
         resolverFiles += builder.build()
     }
 
     return resolverFiles
-}
-
-context(ctx: CodegenContext)
-fun FieldDefinition.generateResolverFunction(parent: ClassName, argument: ClassName, returnType: TypeName, fileSpecBuilder: FileSpec.Builder) {
-    val functionReceiver = TypeResolverBuilder::class.asClassName()
-        .parameterizedBy(parent)
-        .copy(annotations = emptyList())
-
-    val function = FunSpec.builder(name)
-        .receiver(functionReceiver)
-        .addParameter(functionalResolverLambdaParameter(parent, argument, returnType))
-        .addCode("resolve(%S, $RESOLVER_PARAMETER_NAME)", name)
-        .build()
-
-    fileSpecBuilder.addFunction(function)
-}
-
-private fun functionalResolverLambdaParameter(className: ClassName, argumentType: ClassName, returnType: TypeName): ParameterSpec {
-    val receiver = ResolverContext::class.asClassName().parameterizedBy(className)
-    val argumentParam = ParameterSpec.builder("argument", argumentType).build()
-
-    return ParameterSpec.builder(
-        RESOLVER_PARAMETER_NAME,
-        LambdaTypeName.get(
-            receiver = receiver,
-            parameters = listOf(argumentParam),
-            returnType = returnType,
-        ).copy(suspending = true),
-    ).build()
 }
 
 fun FieldDefinition.generateResolverInterface(parent: ClassName, argument: ClassName, returnType: TypeName, fileSpecBuilder: FileSpec.Builder) {
@@ -65,22 +35,68 @@ fun FieldDefinition.generateResolverInterface(parent: ClassName, argument: Class
     val interfaceSuperType = Resolver::class.asTypeName().parameterizedBy(parent, argument, returnType)
 
     fileSpecBuilder.addType(TypeSpec.interfaceBuilder(interfaceName).addSuperinterface(interfaceSuperType).build())
+}
 
-    val functionReceiver = TypeResolverBuilder::class.asClassName()
+/**
+ * Generates the typed field reference for one field.
+ *
+ * The generated code is a single extension property returning a [com.arianegraphql.ktx.FieldRef]
+ * (or [com.arianegraphql.ktx.RootFieldRef] for root types where batching makes no sense).
+ * All registration behavior (plain resolvers, batch resolvers) lives on the reference
+ * class in the core library, so generated code keeps the same shape when the resolver
+ * API evolves.
+ */
+fun FieldDefinition.generateFieldRefProperty(
+    parent: ClassName,
+    argument: ClassName,
+    returnType: TypeName,
+    supportsBatch: Boolean,
+    fileSpecBuilder: FileSpec.Builder,
+) {
+    val propertyReceiver = TypeResolverBuilder::class.asClassName()
         .parameterizedBy(parent)
         .copy(annotations = emptyList())
 
-    val function = FunSpec.builder(name)
-        .receiver(functionReceiver)
-        .addParameter(
-            ParameterSpec.builder(
-                RESOLVER_PARAMETER_NAME, ClassName(fileSpecBuilder.packageName, interfaceName)
-            ).build())
-        .addCode("resolve(%S, $RESOLVER_PARAMETER_NAME)", name)
+    val refClassName = ClassName(
+        "com.arianegraphql.ktx",
+        if (supportsBatch) "FieldRef" else "RootFieldRef"
+    )
+    val refType = refClassName.parameterizedBy(parent, argument, returnType)
+
+    val kdoc = buildString {
+        appendLine("Typed reference to the '$name' field of '${parent.simpleName}'.")
+        appendLine()
+        appendLine("Register a resolver with the invoke syntax:")
+        appendLine("```")
+        appendLine("$propertyName { argument -> ... }")
+        appendLine("```")
+        if (supportsBatch) {
+            appendLine()
+            appendLine("Or resolve occurrences in batch to solve N+1 queries:")
+            appendLine("```")
+            appendLine("$propertyName.batch(key = { _, source -> ... }) { keys -> ... }")
+            appendLine("```")
+        }
+    }
+
+    val property = PropertySpec.builder(propertyName, refType)
+        .receiver(propertyReceiver)
+        .addKdoc(kdoc)
+        .getter(
+            FunSpec.getterBuilder()
+                .addStatement("return %T(this, %S, %T::class.java)", refClassName, name, argument)
+                .build()
+        )
         .build()
 
-
-    fileSpecBuilder.addFunction(function)
+    fileSpecBuilder.addProperty(property)
 }
 
-private const val RESOLVER_PARAMETER_NAME = "resolver"
+/**
+ * Field names that would clash with members of [TypeResolverBuilder] are escaped with a
+ * `Field` suffix, since members always win over extension properties in Kotlin resolution.
+ */
+private val FieldDefinition.propertyName: String
+    get() = if (name in RESERVED_BUILDER_MEMBERS) "${name}Field" else name
+
+private val RESERVED_BUILDER_MEMBERS = setOf("resolve", "resolveBatch", "build", "typeResolvers")

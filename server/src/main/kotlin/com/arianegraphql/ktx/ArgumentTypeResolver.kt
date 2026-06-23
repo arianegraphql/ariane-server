@@ -11,7 +11,9 @@ interface ArgumentTypeResolver {
 }
 
 val GraphQLContext.argumentTypeResolver: ArgumentTypeResolver
-    get() = get("com.arianegraphql:ArgumentTypeResolver")
+    get() = checkNotNull(get<ArgumentTypeResolver>("com.arianegraphql:ArgumentTypeResolver")) {
+        "No ArgumentTypeResolver registered in the GraphQLContext"
+    }
 
 internal fun GraphQLContext.Builder.argumentTypeResolver(it: ArgumentTypeResolver): GraphQLContext.Builder =
     put("com.arianegraphql:ArgumentTypeResolver", it)
